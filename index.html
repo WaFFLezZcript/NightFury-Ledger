@@ -533,7 +533,7 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-[10px] font-mono font-bold uppercase text-slate-400 mb-1">Amount (<span class="currency-symbol">RM</span>)</label>
-                        <input type="number" step="0.01" min="0.01" id="form-tx-amount" required placeholder="0.00" class="w-full px-3.5 py-3 bg-obsidian border border-borderdark rounded-xl text-xs font-bold text-white font-mono focus:outline-none focus:border-emeraldglow">
+                        <input type="number" inputmode="decimal" step="0.01" min="0.01" id="form-tx-amount" required placeholder="0.00" class="w-full px-3.5 py-3 bg-obsidian border border-borderdark rounded-xl text-xs font-bold text-white font-mono focus:outline-none focus:border-emeraldglow">
                     </div>
                     <div>
                         <label class="block text-[10px] font-mono font-bold uppercase text-slate-400 mb-1">Category</label>
@@ -567,10 +567,33 @@
                 </div>
                 <div>
                     <label class="block text-[10px] font-mono font-bold uppercase text-slate-400 mb-1">Monthly Cap (<span class="currency-symbol">RM</span>)</label>
-                    <input type="number" id="custom-cat-limit" required min="10" placeholder="500" class="w-full px-3 py-2 bg-obsidian border border-borderdark rounded-xl text-xs font-mono text-white focus:outline-none focus:border-emeraldglow">
+                    <input type="number" inputmode="decimal" id="custom-cat-limit" required min="10" placeholder="500" class="w-full px-3 py-2 bg-obsidian border border-borderdark rounded-xl text-xs font-mono text-white focus:outline-none focus:border-emeraldglow">
                 </div>
                 <button type="submit" class="w-full py-2.5 bg-emeraldglow text-obsidian font-extrabold uppercase text-xs rounded-xl">
                     Create Cap
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- EDIT CATEGORY CAP MODAL (iOS-FRIENDLY REPLACEMENT FOR PROMPT) -->
+    <div id="modal-edit-cap" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
+        <div onclick="closeEditCapModal()" class="absolute inset-0 bg-obsidian/80 backdrop-blur-md"></div>
+        <div class="relative w-full max-w-xs bg-charcoal border border-borderdark rounded-2xl p-5 shadow-2xl z-10 space-y-4">
+            <div class="flex items-center justify-between">
+                <h3 class="font-bold text-white text-sm" id="edit-cap-title">Edit Monthly Cap</h3>
+                <button type="button" onclick="closeEditCapModal()" class="w-7 h-7 rounded-full bg-obsidian text-slate-400 hover:text-white flex items-center justify-center border border-borderdark">
+                    <i class="fa-solid fa-times text-[11px]"></i>
+                </button>
+            </div>
+            <form onsubmit="handleSaveEditCap(event)" class="space-y-3">
+                <input type="hidden" id="edit-cap-cat-id" value="">
+                <div>
+                    <label class="block text-[10px] font-mono font-bold uppercase text-slate-400 mb-1">Monthly Limit (<span class="currency-symbol">RM</span>)</label>
+                    <input type="number" inputmode="decimal" step="0.01" min="0" id="edit-cap-amount" required placeholder="500" class="w-full px-3 py-2.5 bg-obsidian border border-borderdark rounded-xl text-xs font-mono font-bold text-white focus:outline-none focus:border-emeraldglow">
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-emeraldglow text-obsidian font-extrabold uppercase text-xs rounded-xl">
+                    Update Cap
                 </button>
             </form>
         </div>
@@ -591,12 +614,31 @@
             { id: "Others", label: "Others", icon: "fa-ellipsis", color: "#64748B", defaultLimit: 300 }
         ];
 
+        const INCOME_CATEGORIES = [
+            { id: "Salary", label: "Salary", icon: "fa-briefcase", color: "#10B981" },
+            { id: "Bonus", label: "Bonus", icon: "fa-gift", color: "#34D399" },
+            { id: "Freelance / Side Income", label: "Freelance / Side", icon: "fa-laptop-code", color: "#38BDF8" },
+            { id: "Investment Returns", label: "Investment Returns", icon: "fa-chart-line", color: "#A855F7" },
+            { id: "Other Income", label: "Other Income", icon: "fa-wallet", color: "#F59E0B" }
+        ];
+
         const STORAGE_KEY = "nightfury_ledger_v3";
+
+        function getCurrentMonthKey() {
+            const now = new Date();
+            return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+        }
+
+        function getLocalTodayStr() {
+            const now = new Date();
+            return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+        }
 
         let state = {
             currency: "RM",
             privacyMode: false,
-            activeMonth: "2026-11",
+            hasInitialized: false,
+            activeMonth: getCurrentMonthKey(),
             categoryBudgets: {},
             customCategories: [],
             months: {}
@@ -611,7 +653,7 @@
             initializeUI();
             renderApp();
 
-            // Auto eye blink timer every 6 seconds
+            // Auto eye blink timer every 6.5 seconds
             setInterval(() => {
                 if (!state.privacyMode) {
                     triggerEyeBlink();
@@ -647,11 +689,17 @@
         function loadState() {
             const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) {
-                try { state = JSON.parse(saved); } catch(e){}
+                try {
+                    const parsed = JSON.parse(saved);
+                    state = { ...state, ...parsed };
+                    if (state.months && Object.keys(state.months).length > 0) {
+                        state.hasInitialized = true;
+                    }
+                } catch(e){}
             }
 
             if (!state.currency) state.currency = "RM";
-            if (!state.activeMonth) state.activeMonth = "2026-11";
+            if (!state.activeMonth) state.activeMonth = getCurrentMonthKey();
             if (!state.months) state.months = {};
             if (!state.categoryBudgets) state.categoryBudgets = {};
             if (!state.customCategories) state.customCategories = [];
@@ -662,8 +710,12 @@
                 }
             });
 
-            if (!state.months[state.activeMonth] || state.months[state.activeMonth].length === 0) {
+            if (!state.hasInitialized) {
                 loadSampleDataForMonth(state.activeMonth);
+                state.hasInitialized = true;
+                saveState();
+            } else if (!state.months[state.activeMonth]) {
+                state.months[state.activeMonth] = [];
             }
         }
 
@@ -675,10 +727,20 @@
             return [...DEFAULT_CATEGORIES, ...state.customCategories];
         }
 
+        function getCategoryMeta(catId, type) {
+            if (type === 'INCOME') {
+                const incMatch = INCOME_CATEGORIES.find(c => c.id === catId);
+                if (incMatch) return incMatch;
+            }
+            return getAllCategories().find(c => c.id === catId)
+                || INCOME_CATEGORIES.find(c => c.id === catId)
+                || { icon: type === 'INCOME' ? 'fa-wallet' : 'fa-tag', color: type === 'INCOME' ? '#10B981' : '#64748B' };
+        }
+
         function loadSampleDataForMonth(mKey) {
             const [y, m] = mKey.split('-');
             state.months[mKey] = [
-                { id: 't1', date: `${y}-${m}-01`, desc: 'Executive Salary Inflow', amount: 6800, type: 'INCOME', category: 'Savings & Investments' },
+                { id: 't1', date: `${y}-${m}-01`, desc: 'Executive Salary Inflow', amount: 6800, type: 'INCOME', category: 'Salary' },
                 { id: 't2', date: `${y}-${m}-02`, desc: 'Luxury Condo Rental & Utility', amount: 1450, type: 'EXPENSE', category: 'Bills & Utilities' },
                 { id: 't3', date: `${y}-${m}-05`, desc: 'Jaya Grocer Premium Supplies', amount: 390, type: 'EXPENSE', category: 'Food & Dining' },
                 { id: 't4', date: `${y}-${m}-08`, desc: 'PETRONAS Primax 97 Fuel', amount: 170, type: 'EXPENSE', category: 'Fuel & Transport' },
@@ -704,26 +766,27 @@
             }, 300);
         }
 
-        function togglePrivacyMode() {
-            state.privacyMode = !state.privacyMode;
-            saveState();
-
+        function syncPrivacyVisuals() {
             const svgHeader = document.getElementById('header-toothless-svg');
             const svgHero = document.getElementById('hero-toothless-svg');
             const badge = document.getElementById('privacy-lock-badge');
 
             if (state.privacyMode) {
-                svgHeader.classList.add('blinking');
-                svgHero.classList.add('blinking');
-                badge.innerHTML = `<i class="fa-solid fa-lock text-tailfincrimson"></i>`;
-                showToast("Privacy mode active");
+                if (svgHeader) svgHeader.classList.add('blinking');
+                if (svgHero) svgHero.classList.add('blinking');
+                if (badge) badge.innerHTML = `<i class="fa-solid fa-lock text-tailfincrimson"></i>`;
             } else {
-                svgHeader.classList.remove('blinking');
-                svgHero.classList.remove('blinking');
-                badge.innerHTML = `<i class="fa-solid fa-eye text-emeraldglow"></i>`;
-                showToast("Privacy mode deactivated");
+                if (svgHeader) svgHeader.classList.remove('blinking');
+                if (svgHero) svgHero.classList.remove('blinking');
+                if (badge) badge.innerHTML = `<i class="fa-solid fa-eye text-emeraldglow"></i>`;
             }
+        }
 
+        function togglePrivacyMode() {
+            state.privacyMode = !state.privacyMode;
+            saveState();
+            syncPrivacyVisuals();
+            showToast(state.privacyMode ? "Privacy mode active" : "Privacy mode deactivated");
             applyPrivacyMasking();
         }
 
@@ -740,18 +803,24 @@
         function initializeUI() {
             document.getElementById('month-picker-input').value = state.activeMonth;
             document.getElementById('setting-currency-select').value = state.currency;
-            document.getElementById('form-tx-date').value = new Date().toISOString().split('T')[0];
+            document.getElementById('form-tx-date').value = getLocalTodayStr();
             populateCategoryDropdowns();
+            syncPrivacyVisuals();
         }
 
-        function populateCategoryDropdowns() {
-            const categories = getAllCategories();
+        function populateCategoryDropdowns(selectedType = 'EXPENSE') {
+            const expenseCategories = getAllCategories();
             const txCatSelect = document.getElementById('form-tx-category');
             const filterCatSelect = document.getElementById('log-filter-cat');
 
-            txCatSelect.innerHTML = categories.map(c => `<option value="${c.id}">${c.label}</option>`).join('');
+            const activeList = selectedType === 'INCOME' ? INCOME_CATEGORIES : expenseCategories;
+            txCatSelect.innerHTML = activeList.map(c => `<option value="${c.id}">${c.label}</option>`).join('');
+
+            const prevFilter = filterCatSelect.value || 'ALL';
+            const combined = [...expenseCategories, ...INCOME_CATEGORIES];
             filterCatSelect.innerHTML = `<option value="ALL">All Categories</option>` + 
-                categories.map(c => `<option value="${c.id}">${c.label}</option>`).join('');
+                combined.map(c => `<option value="${c.id}">${c.label}</option>`).join('');
+            filterCatSelect.value = prevFilter;
         }
 
         function renderApp() {
@@ -782,7 +851,7 @@
         function changeActiveMonth(mKey) {
             if (!mKey) return;
             state.activeMonth = mKey;
-            if (!state.months[mKey]) loadSampleDataForMonth(mKey);
+            if (!state.months[mKey]) state.months[mKey] = [];
             saveState();
             renderApp();
         }
@@ -795,11 +864,18 @@
 
             let totalIncome = 0;
             let totalExpenses = 0;
+            let savingsAllocated = 0;
 
             txs.forEach(t => {
                 const amt = Number(t.amount) || 0;
-                if (t.type === 'INCOME') totalIncome += amt;
-                else totalExpenses += amt;
+                if (t.type === 'INCOME') {
+                    totalIncome += amt;
+                } else {
+                    totalExpenses += amt;
+                    if (t.category === 'Savings & Investments') {
+                        savingsAllocated += amt;
+                    }
+                }
             });
 
             const netBalance = totalIncome - totalExpenses;
@@ -814,10 +890,20 @@
 
             const [y, m] = state.activeMonth.split('-');
             const daysInMonth = new Date(parseInt(y), parseInt(m), 0).getDate();
-            const todayDay = new Date().getDate();
-            const daysRemaining = Math.max(1, daysInMonth - todayDay + 1);
+            const currentMonthKey = getCurrentMonthKey();
+            let daysRemaining = daysInMonth;
+
+            if (state.activeMonth === currentMonthKey) {
+                const todayDay = new Date().getDate();
+                daysRemaining = Math.max(1, daysInMonth - todayDay + 1);
+            } else if (state.activeMonth < currentMonthKey) {
+                daysRemaining = 1;
+            } else {
+                daysRemaining = daysInMonth;
+            }
+
             const remainingBudget = Math.max(0, totalTargetCap - totalExpenses);
-            const dailySafe = remainingBudget / daysRemaining;
+            const dailySafe = state.activeMonth < currentMonthKey ? 0 : (remainingBudget / daysRemaining);
 
             document.getElementById('hero-daily-safe').textContent = formatCurrency(dailySafe);
 
@@ -868,11 +954,14 @@
             badgeText.textContent = statusMessage;
             brandAccent.style.color = activeColor;
 
-            const savingsRate = totalIncome > 0 ? (((totalIncome - totalExpenses) / totalIncome) * 100).toFixed(1) : 0;
+            // Savings rate counts unspent income PLUS transfers into Savings & Investments
+            const totalSaved = (totalIncome - totalExpenses) + savingsAllocated;
+            const savingsRate = totalIncome > 0 ? ((totalSaved / totalIncome) * 100).toFixed(1) : '0.0';
             document.getElementById('overview-savings-rate').textContent = `${savingsRate}% Saved`;
 
-            // Recent 3 Items
-            document.getElementById('dashboard-recent-list').innerHTML = buildTxListHtml(txs.slice(0, 3));
+            // Recent 3 Items (sorted newest first)
+            const sortedRecent = [...txs].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+            document.getElementById('dashboard-recent-list').innerHTML = buildTxListHtml(sortedRecent.slice(0, 3));
         }
 
         /**
@@ -884,12 +973,14 @@
             const filterType = document.getElementById('log-filter-type').value;
             const filterCat = document.getElementById('log-filter-cat').value;
 
-            const filtered = txs.filter(t => {
-                const matchSearch = t.desc.toLowerCase().includes(searchVal) || t.category.toLowerCase().includes(searchVal);
-                const matchType = filterType === 'ALL' || t.type === filterType;
-                const matchCat = filterCat === 'ALL' || t.category === filterCat;
-                return matchSearch && matchType && matchCat;
-            });
+            const filtered = txs
+                .filter(t => {
+                    const matchSearch = t.desc.toLowerCase().includes(searchVal) || t.category.toLowerCase().includes(searchVal);
+                    const matchType = filterType === 'ALL' || t.type === filterType;
+                    const matchCat = filterCat === 'ALL' || t.category === filterCat;
+                    return matchSearch && matchType && matchCat;
+                })
+                .sort((a, b) => (b.date || '').localeCompare(a.date || ''));
 
             document.getElementById('log-total-count').textContent = `${filtered.length} Entries`;
             document.getElementById('full-log-list').innerHTML = buildTxListHtml(filtered);
@@ -902,7 +993,7 @@
             }
 
             return list.map(t => {
-                const catObj = getAllCategories().find(c => c.id === t.category) || { icon: 'fa-tag', color: '#64748B' };
+                const catObj = getCategoryMeta(t.category, t.type);
                 const isIncome = t.type === 'INCOME';
                 const sign = isIncome ? '+' : '-';
                 const amtColor = isIncome ? 'text-emeraldglow' : 'text-slate-200';
@@ -911,7 +1002,7 @@
                     <div class="flex items-center justify-between p-3.5 bg-cardbg hover:bg-charcoal rounded-xl border border-borderdark/80 transition">
                         <div class="flex items-center gap-3 min-w-0">
                             <div class="w-9 h-9 rounded-xl flex items-center justify-center text-xs text-white flex-shrink-0" style="background-color: ${catObj.color}22; border: 1px solid ${catObj.color}">
-                                <i class="fa-solid ${isIncome ? 'fa-wallet' : catObj.icon}"></i>
+                                <i class="fa-solid ${catObj.icon}"></i>
                             </div>
                             <div class="min-w-0">
                                 <h4 class="font-bold text-xs text-white leading-tight truncate">${escapeHtml(t.desc)}</h4>
@@ -956,7 +1047,7 @@
             container.innerHTML = categories.map(cat => {
                 const spent = catSpent[cat.id] || 0;
                 const cap = state.categoryBudgets[cat.id] || 500;
-                const pct = Math.min(100, Math.round((spent / cap) * 100));
+                const pct = cap > 0 ? Math.min(100, Math.round((spent / cap) * 100)) : 0;
 
                 let barColor = cat.color;
                 if (pct > 95) barColor = "#E11D48";
@@ -971,7 +1062,7 @@
                                 <span class="font-bold text-xs text-slate-200">${cat.label}</span>
                             </div>
 
-                            <button type="button" onclick="editCategoryCap('${cat.id}')" class="text-[11px] font-mono font-bold text-slate-400 hover:text-emeraldglow flex items-center gap-1 bg-obsidian px-2.5 py-1 rounded-lg border border-borderdark">
+                            <button type="button" onclick="editCategoryCap('${cat.id.replace(/'/g, "\\'")}')" class="text-[11px] font-mono font-bold text-slate-400 hover:text-emeraldglow flex items-center gap-1 bg-obsidian px-2.5 py-1 rounded-lg border border-borderdark">
                                 Cap: <span class="text-white privacy-target">${formatCurrency(cap)}</span> <i class="fa-solid fa-pen text-[9px]"></i>
                             </button>
                         </div>
@@ -992,15 +1083,27 @@
 
         function editCategoryCap(catId) {
             const currentCap = state.categoryBudgets[catId] || 500;
-            const newCapStr = prompt(`Set new monthly budget cap for ${catId}:`, currentCap);
-            if (newCapStr !== null) {
-                const newCap = parseFloat(newCapStr);
-                if (!isNaN(newCap) && newCap >= 0) {
-                    state.categoryBudgets[catId] = newCap;
-                    saveState();
-                    renderApp();
-                    showToast("Category limit updated!");
-                }
+            document.getElementById('edit-cap-cat-id').value = catId;
+            document.getElementById('edit-cap-title').textContent = `Edit Cap: ${catId}`;
+            document.getElementById('edit-cap-amount').value = currentCap;
+            document.getElementById('modal-edit-cap').classList.remove('hidden');
+            setTimeout(() => document.getElementById('edit-cap-amount').focus(), 50);
+        }
+
+        function closeEditCapModal() {
+            document.getElementById('modal-edit-cap').classList.add('hidden');
+        }
+
+        function handleSaveEditCap(e) {
+            e.preventDefault();
+            const catId = document.getElementById('edit-cap-cat-id').value;
+            const newCap = parseFloat(document.getElementById('edit-cap-amount').value);
+            if (!isNaN(newCap) && newCap >= 0) {
+                state.categoryBudgets[catId] = newCap;
+                saveState();
+                renderApp();
+                closeEditCapModal();
+                showToast("Category limit updated!");
             }
         }
 
@@ -1023,8 +1126,13 @@
             const totalExpenses = Object.values(catSpent).reduce((a, b) => a + b, 0);
             const [y, m] = state.activeMonth.split('-');
             const daysInMonth = new Date(parseInt(y), parseInt(m), 0).getDate();
-            const todayDay = Math.min(daysInMonth, new Date().getDate());
-            const projected = (totalExpenses / Math.max(1, todayDay)) * daysInMonth;
+            const currentMonthKey = getCurrentMonthKey();
+
+            let projected = totalExpenses;
+            if (state.activeMonth === currentMonthKey) {
+                const todayDay = Math.min(daysInMonth, new Date().getDate());
+                projected = (totalExpenses / Math.max(1, todayDay)) * daysInMonth;
+            }
 
             document.getElementById('insight-projected').textContent = formatCurrency(projected);
 
@@ -1124,6 +1232,9 @@
             document.getElementById('form-tx-id').value = '';
             document.getElementById('form-tx-desc').value = '';
             document.getElementById('form-tx-amount').value = '';
+            document.getElementById('form-tx-date').value = (state.activeMonth === getCurrentMonthKey())
+                ? getLocalTodayStr()
+                : `${state.activeMonth}-01`;
             document.getElementById('tx-modal-title').innerHTML = `<i class="fa-solid fa-plus-circle text-emeraldglow"></i> Log New Entry`;
             setTxModalType('EXPENSE');
         }
@@ -1144,6 +1255,8 @@
                 btnInc.className = "py-2.5 rounded-lg bg-emeraldglow/20 text-emeraldglow border border-emeraldglow/40 font-bold";
                 btnExp.className = "py-2.5 rounded-lg text-slate-400";
             }
+
+            populateCategoryDropdowns(type);
         }
 
         function handleSaveTransaction(e) {
@@ -1155,12 +1268,21 @@
             const date = document.getElementById('form-tx-date').value;
             const type = document.getElementById('form-tx-type').value;
 
-            if (!desc || isNaN(amount) || amount <= 0) return;
+            if (!desc || isNaN(amount) || amount <= 0 || !date) return;
 
-            const mData = state.months[state.activeMonth] || [];
-            const existingIdx = mData.findIndex(t => t.id === id);
-
+            const targetMonth = date.slice(0, 7) || state.activeMonth;
             const item = { id, desc, amount, category, date, type };
+
+            // Remove from any previous month if date was edited across months
+            Object.keys(state.months).forEach(mKey => {
+                if (mKey !== targetMonth && Array.isArray(state.months[mKey])) {
+                    state.months[mKey] = state.months[mKey].filter(t => t.id !== id);
+                }
+            });
+
+            if (!state.months[targetMonth]) state.months[targetMonth] = [];
+            const mData = state.months[targetMonth];
+            const existingIdx = mData.findIndex(t => t.id === id);
 
             if (existingIdx >= 0) {
                 mData[existingIdx] = item;
@@ -1168,11 +1290,16 @@
                 mData.unshift(item);
             }
 
-            state.months[state.activeMonth] = mData;
+            state.months[targetMonth] = mData;
             saveState();
             renderApp();
             closeTransactionModal();
-            showToast("Transaction saved!");
+
+            if (targetMonth !== state.activeMonth) {
+                showToast(`Saved to ${targetMonth}!`);
+            } else {
+                showToast("Transaction saved!");
+            }
         }
 
         function editTransaction(id) {
@@ -1183,17 +1310,25 @@
             document.getElementById('form-tx-id').value = t.id;
             document.getElementById('form-tx-desc').value = t.desc;
             document.getElementById('form-tx-amount').value = t.amount;
-            document.getElementById('form-tx-category').value = t.category;
             document.getElementById('form-tx-date').value = t.date;
             document.getElementById('tx-modal-title').innerHTML = `<i class="fa-solid fa-pen text-emeraldglow"></i> Edit Entry`;
             setTxModalType(t.type);
+
+            const catSelect = document.getElementById('form-tx-category');
+            if (![...catSelect.options].some(opt => opt.value === t.category)) {
+                const legacyOpt = document.createElement('option');
+                legacyOpt.value = t.category;
+                legacyOpt.textContent = t.category;
+                catSelect.appendChild(legacyOpt);
+            }
+            catSelect.value = t.category;
 
             document.getElementById('modal-transaction').classList.remove('hidden');
         }
 
         function deleteTransaction(id) {
             if (confirm("Delete this transaction entry?")) {
-                state.months[state.activeMonth] = state.months[state.activeMonth].filter(t => t.id !== id);
+                state.months[state.activeMonth] = (state.months[state.activeMonth] || []).filter(t => t.id !== id);
                 saveState();
                 renderApp();
                 showToast("Transaction deleted.");
@@ -1225,7 +1360,7 @@
 
             state.categoryBudgets[name] = limit;
             saveState();
-            populateCategoryDropdowns();
+            populateCategoryDropdowns(document.getElementById('form-tx-type').value || 'EXPENSE');
             renderApp();
             closeAddCategoryModal();
             showToast("Custom category created!");
@@ -1258,7 +1393,7 @@
             const jsonStr = JSON.stringify(state, null, 2);
             const link = document.createElement("a");
             link.href = "data:application/json;charset=utf-8," + encodeURIComponent(jsonStr);
-            link.download = `NightFury_Backup_${new Date().toISOString().split('T')[0]}.json`;
+            link.download = `NightFury_Backup_${getLocalTodayStr()}.json`;
             link.click();
             showToast("JSON Backup Saved!");
         }
@@ -1272,9 +1407,9 @@
                 try {
                     const imported = JSON.parse(evt.target.result);
                     if (imported && imported.months) {
-                        state = imported;
+                        state = { ...state, ...imported, hasInitialized: true };
                         saveState();
-                        populateCategoryDropdowns();
+                        initializeUI();
                         renderApp();
                         showToast("Backup restored!");
                     } else {
@@ -1289,6 +1424,7 @@
 
         function restoreSampleData() {
             loadSampleDataForMonth(state.activeMonth);
+            state.hasInitialized = true;
             saveState();
             renderApp();
             showToast("Sample data loaded!");
@@ -1297,12 +1433,23 @@
         function resetAllData() {
             if (confirm("Reset ALL budget data?")) {
                 localStorage.removeItem(STORAGE_KEY);
-                state = { currency: "RM", privacyMode: false, activeMonth: "2026-11", categoryBudgets: {}, customCategories: [], months: {} };
-                loadSampleDataForMonth("2026-11");
+                const curMonth = getCurrentMonthKey();
+                state = {
+                    currency: "RM",
+                    privacyMode: false,
+                    hasInitialized: true,
+                    activeMonth: curMonth,
+                    categoryBudgets: {},
+                    customCategories: [],
+                    months: { [curMonth]: [] }
+                };
+                getAllCategories().forEach(c => {
+                    state.categoryBudgets[c.id] = c.defaultLimit || 500;
+                });
                 saveState();
-                populateCategoryDropdowns();
+                initializeUI();
                 renderApp();
-                showToast("All data reset.");
+                showToast("All data cleared.");
             }
         }
 
