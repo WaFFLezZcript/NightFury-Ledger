@@ -140,16 +140,20 @@
                 </div>
             </div>
 
-            <!-- MONTH SELECTOR & SETTINGS -->
-            <div class="flex items-center gap-2">
+            <!-- MONTH SELECTOR, AI CONSULTANT & SETTINGS -->
+            <div class="flex items-center gap-1.5">
                 <div class="relative">
                     <input type="month" id="month-picker-input" onchange="changeActiveMonth(this.value)" class="absolute inset-0 opacity-0 w-full h-full cursor-pointer z-10">
-                    <div class="px-3 py-1.5 bg-charcoal border border-borderdark rounded-xl flex items-center gap-1.5 text-xs font-bold text-slate-200 hover:border-slate-500 transition">
+                    <div class="px-2.5 py-1.5 bg-charcoal border border-borderdark rounded-xl flex items-center gap-1.5 text-xs font-bold text-slate-200 hover:border-slate-500 transition">
                         <i class="fa-solid fa-calendar-alt text-emeraldglow text-[11px]" id="header-calendar-icon"></i>
                         <span id="header-month-label">Nov 2026</span>
                         <i class="fa-solid fa-chevron-down text-[9px] text-slate-500"></i>
                     </div>
                 </div>
+
+                <button type="button" onclick="openAiModal()" title="Ask Gemini Financial Consultant" class="w-8 h-8 rounded-xl bg-charcoal border border-plasmaglow/40 hover:border-plasmaglow text-plasmaglow flex items-center justify-center text-xs transition active:scale-95">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </button>
 
                 <button type="button" onclick="switchTab('tab-settings')" class="w-8 h-8 rounded-xl bg-charcoal border border-borderdark hover:border-emeraldglow/40 text-slate-300 hover:text-white flex items-center justify-center text-xs transition">
                     <i class="fa-solid fa-sliders"></i>
@@ -299,6 +303,24 @@
                 </div>
             </div>
 
+            <!-- SEPARATE DEBT & BNPL VAULT SUMMARY CARD (ISOLATED FROM CASH BALANCE) -->
+            <button type="button" onclick="switchTab('tab-debts')" class="w-full text-left bg-cardbg hover:bg-charcoal p-4 rounded-2xl border border-borderdark flex items-center justify-between transition active:scale-[0.99]">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 rounded-xl bg-tailfincrimson/10 border border-tailfincrimson/30 flex items-center justify-center text-tailfincrimson flex-shrink-0">
+                        <i class="fa-solid fa-scale-unbalanced"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <span class="text-[10px] font-mono uppercase font-bold text-slate-400 block">Debt & BNPL Vault (Separate)</span>
+                        <span id="overview-total-debt" class="text-sm font-extrabold text-tailfincrimson font-mono privacy-target block truncate">RM 0.00</span>
+                    </div>
+                </div>
+
+                <div class="text-right flex-shrink-0">
+                    <span id="overview-debt-monthly" class="text-[10px] font-mono font-bold text-slate-400 block privacy-target">RM 0/mo</span>
+                    <span class="text-[11px] font-bold text-emeraldglow">Manage &rarr;</span>
+                </div>
+            </button>
+
             <!-- RECENT TRANSACTIONS PREVIEW -->
             <div class="space-y-3">
                 <div class="flex items-center justify-between">
@@ -405,7 +427,45 @@
             </div>
         </section>
 
-        <!-- ================= TAB 5: VAULT / SETTINGS ================= -->
+        <!-- ================= TAB 5: DEBT & BNPL VAULT ================= -->
+        <section id="view-debts" class="space-y-4 hidden">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="switchTab('tab-dashboard')" class="w-7 h-7 rounded-lg bg-charcoal border border-borderdark text-slate-300 flex items-center justify-center text-xs">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <h2 class="font-bold text-sm text-white flex items-center gap-2">
+                        <i class="fa-solid fa-scale-unbalanced text-tailfincrimson"></i> Debt & BNPL Vault
+                    </h2>
+                </div>
+                <button type="button" onclick="openAddDebtModal()" class="px-3 py-1.5 bg-tailfincrimson/15 text-tailfincrimson hover:bg-tailfincrimson hover:text-white font-bold text-xs rounded-xl border border-tailfincrimson/40 transition">
+                    + Add Debt
+                </button>
+            </div>
+
+            <!-- DEBT SUMMARY BANNER -->
+            <div class="bg-cardbg p-4 rounded-2xl border border-borderdark grid grid-cols-2 gap-3">
+                <div class="bg-obsidian p-3 rounded-xl border border-borderdark">
+                    <span class="text-[9px] font-mono text-slate-400 uppercase block">Total Outstanding Debt</span>
+                    <span id="debt-vault-total" class="text-base font-black text-tailfincrimson font-mono privacy-target block mt-0.5">RM 0.00</span>
+                </div>
+                <div class="bg-obsidian p-3 rounded-xl border border-borderdark">
+                    <span class="text-[9px] font-mono text-slate-400 uppercase block">Est. Monthly Commitment</span>
+                    <span id="debt-vault-monthly" class="text-base font-black text-goldaccent font-mono privacy-target block mt-0.5">RM 0.00</span>
+                </div>
+            </div>
+
+            <p class="text-[11px] text-slate-400 leading-relaxed px-1">
+                Previous loans live here so they won't break your monthly balance. Tap <strong class="text-emeraldglow">Pay</strong> to deduct from cash &amp; debt, or <strong class="text-plasmaglow">Roll / Cash Out</strong> when borrowing back to survive.
+            </p>
+
+            <!-- DEBT LIST -->
+            <div id="debt-vault-list" class="space-y-3">
+                <!-- JS Injected -->
+            </div>
+        </section>
+
+        <!-- ================= TAB 6: VAULT / SETTINGS ================= -->
         <section id="view-settings" class="space-y-5 hidden">
             <h2 class="font-bold text-sm text-white flex items-center gap-2">
                 <i class="fa-solid fa-vault text-emeraldglow"></i> Vault & Configuration
@@ -424,6 +484,20 @@
                         <option value="£">£ - British Pound</option>
                         <option value="¥">¥ - Japanese Yen</option>
                     </select>
+                </div>
+
+                <!-- Gemini AI Consultant Key -->
+                <div class="space-y-2 pt-3 border-t border-borderdark">
+                    <label class="block text-[10px] font-mono font-bold uppercase text-plasmaglow flex items-center gap-1.5">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Gemini AI Consultant (Free API Key)
+                    </label>
+                    <div class="flex gap-2">
+                        <input type="password" id="setting-gemini-key" placeholder="Paste AIza... key from Google AI Studio" class="flex-1 px-3 py-2.5 bg-obsidian border border-borderdark rounded-xl text-xs font-mono text-white focus:outline-none focus:border-plasmaglow">
+                        <button type="button" onclick="saveGeminiKey()" class="px-3.5 py-2.5 bg-plasmaglow text-white font-bold text-xs rounded-xl transition active:scale-95">
+                            Save
+                        </button>
+                    </div>
+                    <p class="text-[10px] text-slate-400">Stored privately on your device only. Lets you ask Gemini about your spending, income, and debt payoff plan.</p>
                 </div>
 
                 <!-- Export / Import Sync Section -->
@@ -498,10 +572,8 @@
 
     <!-- ADD / EDIT TRANSACTION MODAL BOTTOM SHEET -->
     <div id="modal-transaction" class="fixed inset-0 z-[100] hidden flex items-end justify-center">
-        <!-- Backdrop -->
         <div onclick="closeTransactionModal()" class="absolute inset-0 bg-obsidian/80 backdrop-blur-md"></div>
 
-        <!-- Sheet Content -->
         <div class="relative w-full max-w-md bg-charcoal border-t border-borderdark rounded-t-3xl p-6 shadow-2xl z-10 space-y-4 max-h-[90vh] overflow-y-auto">
             
             <div class="w-12 h-1 bg-borderdark rounded-full mx-auto -mt-2 mb-2"></div>
@@ -576,7 +648,7 @@
         </div>
     </div>
 
-    <!-- EDIT CATEGORY CAP MODAL (iOS-FRIENDLY REPLACEMENT FOR PROMPT) -->
+    <!-- EDIT CATEGORY CAP MODAL (iOS-FRIENDLY) -->
     <div id="modal-edit-cap" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
         <div onclick="closeEditCapModal()" class="absolute inset-0 bg-obsidian/80 backdrop-blur-md"></div>
         <div class="relative w-full max-w-xs bg-charcoal border border-borderdark rounded-2xl p-5 shadow-2xl z-10 space-y-4">
@@ -599,17 +671,170 @@
         </div>
     </div>
 
+    <!-- ADD / EDIT DEBT MODAL -->
+    <div id="modal-debt" class="fixed inset-0 z-[100] hidden flex items-end justify-center">
+        <div onclick="closeDebtModal()" class="absolute inset-0 bg-obsidian/80 backdrop-blur-md"></div>
+        <div class="relative w-full max-w-md bg-charcoal border-t border-borderdark rounded-t-3xl p-6 shadow-2xl z-10 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="w-12 h-1 bg-borderdark rounded-full mx-auto -mt-2 mb-2"></div>
+            <div class="flex items-center justify-between">
+                <h3 class="font-bold text-white text-base font-mono flex items-center gap-2" id="debt-modal-title">
+                    <i class="fa-solid fa-scale-unbalanced text-tailfincrimson"></i> Add Previous Debt
+                </h3>
+                <button type="button" onclick="closeDebtModal()" class="w-8 h-8 rounded-full bg-obsidian text-slate-400 hover:text-white flex items-center justify-center border border-borderdark">
+                    <i class="fa-solid fa-times text-xs"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleSaveDebt(event)" class="space-y-3.5">
+                <input type="hidden" id="form-debt-id" value="">
+
+                <div>
+                    <label class="block text-[10px] font-mono font-bold uppercase text-slate-400 mb-1">Provider / Loan Name</label>
+                    <input type="text" id="form-debt-name" list="debt-provider-presets" required placeholder="e.g. SLoan, SPayLater, Grab CC" class="w-full px-3.5 py-3 bg-obsidian border border-borderdark rounded-xl text-xs font-semibold text-white focus:outline-none focus:border-emeraldglow">
+                    <datalist id="debt-provider-presets">
+                        <option value="SLoan">
+                        <option value="SPayLater">
+                        <option value="GrabPayLater">
+                        <option value="TikTok PayLater">
+                        <option value="TikTok Financing">
+                        <option value="Shopee Credit Card">
+                        <option value="Grab Credit Card">
+                    </datalist>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-mono font-bold uppercase text-slate-400 mb-1">Type</label>
+                        <select id="form-debt-type" class="w-full px-3.5 py-3 bg-obsidian border border-borderdark rounded-xl text-xs font-semibold text-white focus:outline-none focus:border-emeraldglow">
+                            <option value="BNPL">BNPL</option>
+                            <option value="Cash Loan">Cash Loan</option>
+                            <option value="Credit Card">Credit Card</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-mono font-bold uppercase text-slate-400 mb-1">Remaining Debt (<span class="currency-symbol">RM</span>)</label>
+                        <input type="number" inputmode="decimal" step="0.01" min="0" id="form-debt-balance" required placeholder="1200.00" class="w-full px-3.5 py-3 bg-obsidian border border-borderdark rounded-xl text-xs font-bold text-white font-mono focus:outline-none focus:border-emeraldglow">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-mono font-bold uppercase text-slate-400 mb-1">Monthly Payment (<span class="currency-symbol">RM</span>)</label>
+                        <input type="number" inputmode="decimal" step="0.01" min="0" id="form-debt-monthly" placeholder="400.00" class="w-full px-3.5 py-3 bg-obsidian border border-borderdark rounded-xl text-xs font-bold text-white font-mono focus:outline-none focus:border-emeraldglow">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-mono font-bold uppercase text-slate-400 mb-1">Months Left (Opt)</label>
+                        <input type="number" inputmode="numeric" min="0" id="form-debt-months" placeholder="3" class="w-full px-3.5 py-3 bg-obsidian border border-borderdark rounded-xl text-xs font-bold text-white font-mono focus:outline-none focus:border-emeraldglow">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full py-3.5 bg-tailfincrimson hover:bg-tailfincrimson/90 text-white font-extrabold uppercase tracking-wider text-xs rounded-xl shadow-lg transition active:scale-[0.98] mt-2">
+                    Save to Debt Vault
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- PAY OR ROLL DEBT ACTION MODAL -->
+    <div id="modal-debt-action" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
+        <div onclick="closeDebtActionModal()" class="absolute inset-0 bg-obsidian/80 backdrop-blur-md"></div>
+        <div class="relative w-full max-w-xs bg-charcoal border border-borderdark rounded-2xl p-5 shadow-2xl z-10 space-y-4">
+            <div class="flex items-center justify-between">
+                <h3 class="font-bold text-white text-sm" id="debt-action-title">Pay Debt</h3>
+                <button type="button" onclick="closeDebtActionModal()" class="w-7 h-7 rounded-full bg-obsidian text-slate-400 hover:text-white flex items-center justify-center border border-borderdark">
+                    <i class="fa-solid fa-times text-[11px]"></i>
+                </button>
+            </div>
+            <p class="text-[11px] text-slate-400 leading-relaxed" id="debt-action-desc"></p>
+            <form onsubmit="handleDebtActionSubmit(event)" class="space-y-3">
+                <input type="hidden" id="debt-action-id" value="">
+                <input type="hidden" id="debt-action-mode" value="PAY">
+
+                <div>
+                    <label class="block text-[10px] font-mono font-bold uppercase text-slate-400 mb-1">Amount (<span class="currency-symbol">RM</span>)</label>
+                    <input type="number" inputmode="decimal" step="0.01" min="0.01" id="debt-action-amount" required placeholder="0.00" class="w-full px-3 py-2.5 bg-obsidian border border-borderdark rounded-xl text-xs font-mono font-bold text-white focus:outline-none focus:border-emeraldglow">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-mono font-bold uppercase text-slate-400 mb-1">Date</label>
+                    <input type="date" id="debt-action-date" required class="w-full px-3 py-2.5 bg-obsidian border border-borderdark rounded-xl text-xs font-semibold text-white focus:outline-none focus:border-emeraldglow">
+                </div>
+                <button type="submit" id="debt-action-submit-btn" class="w-full py-2.5 bg-emeraldglow text-obsidian font-extrabold uppercase text-xs rounded-xl">
+                    Confirm
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- GEMINI AI FINANCIAL CONSULTANT MODAL -->
+    <div id="modal-ai" class="fixed inset-0 z-[100] hidden flex items-end justify-center">
+        <div onclick="closeAiModal()" class="absolute inset-0 bg-obsidian/80 backdrop-blur-md"></div>
+        <div class="relative w-full max-w-md bg-charcoal border-t border-borderdark rounded-t-3xl p-5 shadow-2xl z-10 flex flex-col max-h-[88vh]">
+            <div class="w-12 h-1 bg-borderdark rounded-full mx-auto -mt-1 mb-3 flex-shrink-0"></div>
+
+            <div class="flex items-center justify-between pb-3 border-b border-borderdark flex-shrink-0">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-xl bg-plasmaglow/15 border border-plasmaglow/40 flex items-center justify-center text-plasmaglow">
+                        <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-white text-sm font-mono leading-tight">Gemini Consultant</h3>
+                        <p class="text-[10px] text-slate-400">Live access to your budget &amp; debt vault</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeAiModal()" class="w-8 h-8 rounded-full bg-obsidian text-slate-400 hover:text-white flex items-center justify-center border border-borderdark">
+                    <i class="fa-solid fa-times text-xs"></i>
+                </button>
+            </div>
+
+            <!-- CHAT MESSAGES -->
+            <div id="ai-chat-messages" class="flex-1 overflow-y-auto py-3 space-y-3 min-h-[220px] max-h-[48vh]">
+                <div class="bg-obsidian/80 border border-borderdark p-3 rounded-2xl text-xs text-slate-300 leading-relaxed">
+                    Ask me anything about your monthly spending, safe-to-spend limit, or how to pay down your SLoan, BNPL, and credit cards faster.
+                </div>
+            </div>
+
+            <!-- QUICK PROMPTS -->
+            <div class="flex gap-1.5 overflow-x-auto pb-2.5 flex-shrink-0">
+                <button type="button" onclick="askAiQuick('Analyze my current debt vault and suggest the best payoff order.')" class="px-2.5 py-1.5 bg-obsidian border border-borderdark hover:border-plasmaglow text-[10px] font-mono text-slate-300 rounded-lg whitespace-nowrap">
+                    Debt Payoff Plan
+                </button>
+                <button type="button" onclick="askAiQuick('Where am I overspending this month and how can I cut back?')" class="px-2.5 py-1.5 bg-obsidian border border-borderdark hover:border-plasmaglow text-[10px] font-mono text-slate-300 rounded-lg whitespace-nowrap">
+                    Spending Audit
+                </button>
+                <button type="button" onclick="askAiQuick('How much can I safely spend per day without rolling my SLoan again?')" class="px-2.5 py-1.5 bg-obsidian border border-borderdark hover:border-plasmaglow text-[10px] font-mono text-slate-300 rounded-lg whitespace-nowrap">
+                    Stop Rolling Debt
+                </button>
+            </div>
+
+            <!-- INPUT BAR -->
+            <form onsubmit="handleAiSubmit(event)" class="flex gap-2 pt-1 flex-shrink-0">
+                <input type="text" id="ai-prompt-input" required placeholder="Ask Gemini about your money..." class="flex-1 px-3.5 py-2.5 bg-obsidian border border-borderdark rounded-xl text-xs text-white focus:outline-none focus:border-plasmaglow">
+                <button type="submit" id="ai-send-btn" class="px-4 py-2.5 bg-plasmaglow hover:bg-plasmaglow/90 text-white font-bold text-xs rounded-xl transition active:scale-95">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- TOAST NOTIFICATION -->
     <div id="toast-container" class="fixed top-16 left-1/2 -translate-x-1/2 z-[110] w-full max-w-xs pointer-events-none px-4"></div>
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
         const DEFAULT_CATEGORIES = [
-            { id: "Food & Dining", label: "Food & Dining", icon: "fa-utensils", color: "#F59E0B", defaultLimit: 1200 },
+            { id: "Food & Dining", label: "Food & Dining", icon: "fa-utensils", color: "#F59E0B", defaultLimit: 800 },
+            { id: "Groceries", label: "Groceries", icon: "fa-cart-shopping", color: "#84CC16", defaultLimit: 500 },
             { id: "Fuel & Transport", label: "Fuel & Transport", icon: "fa-car", color: "#38BDF8", defaultLimit: 400 },
-            { id: "Bills & Utilities", label: "Bills & Utilities", icon: "fa-bolt", color: "#10B981", defaultLimit: 800 },
-            { id: "Shopping", label: "Shopping", icon: "fa-bag-shopping", color: "#EC4899", defaultLimit: 600 },
-            { id: "Entertainment", label: "Entertainment", icon: "fa-gamepad", color: "#A855F7", defaultLimit: 300 },
+            { id: "Tolls & Parking", label: "Tolls & Parking", icon: "fa-road", color: "#06B6D4", defaultLimit: 150 },
+            { id: "Housing & Rent", label: "Housing & Rent", icon: "fa-house", color: "#6366F1", defaultLimit: 1200 },
+            { id: "Bills & Utilities", label: "Bills & Utilities", icon: "fa-bolt", color: "#10B981", defaultLimit: 500 },
+            { id: "BNPL & Debt Repayment", label: "BNPL & Debt", icon: "fa-scale-unbalanced", color: "#E11D48", defaultLimit: 600 },
+            { id: "Credit Card", label: "Credit Card", icon: "fa-credit-card", color: "#F43F5E", defaultLimit: 500 },
+            { id: "Shopping", label: "Shopping", icon: "fa-bag-shopping", color: "#EC4899", defaultLimit: 400 },
+            { id: "Subscriptions", label: "Subscriptions", icon: "fa-repeat", color: "#8B5CF6", defaultLimit: 150 },
+            { id: "Health & Medical", label: "Health & Medical", icon: "fa-heart-pulse", color: "#14B8A6", defaultLimit: 200 },
+            { id: "Entertainment", label: "Entertainment", icon: "fa-gamepad", color: "#A855F7", defaultLimit: 250 },
+            { id: "Family & Gifts", label: "Family & Gifts", icon: "fa-gift", color: "#FB923C", defaultLimit: 300 },
             { id: "Savings & Investments", label: "Savings & Invest", icon: "fa-piggy-bank", color: "#34D399", defaultLimit: 1000 },
             { id: "Others", label: "Others", icon: "fa-ellipsis", color: "#64748B", defaultLimit: 300 }
         ];
@@ -619,10 +844,12 @@
             { id: "Bonus", label: "Bonus", icon: "fa-gift", color: "#34D399" },
             { id: "Freelance / Side Income", label: "Freelance / Side", icon: "fa-laptop-code", color: "#38BDF8" },
             { id: "Investment Returns", label: "Investment Returns", icon: "fa-chart-line", color: "#A855F7" },
-            { id: "Other Income", label: "Other Income", icon: "fa-wallet", color: "#F59E0B" }
+            { id: "Loan Roll / Cash-Out", label: "Loan Roll / Cash-Out", icon: "fa-arrows-rotate", color: "#F59E0B" },
+            { id: "Other Income", label: "Other Income", icon: "fa-wallet", color: "#94A3B8" }
         ];
 
         const STORAGE_KEY = "nightfury_ledger_v3";
+        const GEMINI_KEY_STORAGE = "nightfury_gemini_api_key";
 
         function getCurrentMonthKey() {
             const now = new Date();
@@ -641,6 +868,7 @@
             activeMonth: getCurrentMonthKey(),
             categoryBudgets: {},
             customCategories: [],
+            debts: [],
             months: {}
         };
 
@@ -653,7 +881,6 @@
             initializeUI();
             renderApp();
 
-            // Auto eye blink timer every 6.5 seconds
             setInterval(() => {
                 if (!state.privacyMode) {
                     triggerEyeBlink();
@@ -670,7 +897,6 @@
             ctx.beginPath(); ctx.roundRect(0, 0, 180, 180, 40); ctx.fill();
             ctx.strokeStyle = '#212B3E'; ctx.lineWidth = 4; ctx.stroke();
 
-            // Glowing Emerald Slit Eyes
             ctx.save();
             ctx.shadowColor = '#10B981'; ctx.shadowBlur = 20;
             ctx.fillStyle = '#10B981';
@@ -703,6 +929,7 @@
             if (!state.months) state.months = {};
             if (!state.categoryBudgets) state.categoryBudgets = {};
             if (!state.customCategories) state.customCategories = [];
+            if (!Array.isArray(state.debts)) state.debts = [];
 
             getAllCategories().forEach(c => {
                 if (state.categoryBudgets[c.id] === undefined) {
@@ -741,13 +968,11 @@
             const [y, m] = mKey.split('-');
             state.months[mKey] = [
                 { id: 't1', date: `${y}-${m}-01`, desc: 'Executive Salary Inflow', amount: 6800, type: 'INCOME', category: 'Salary' },
-                { id: 't2', date: `${y}-${m}-02`, desc: 'Luxury Condo Rental & Utility', amount: 1450, type: 'EXPENSE', category: 'Bills & Utilities' },
-                { id: 't3', date: `${y}-${m}-05`, desc: 'Jaya Grocer Premium Supplies', amount: 390, type: 'EXPENSE', category: 'Food & Dining' },
-                { id: 't4', date: `${y}-${m}-08`, desc: 'PETRONAS Primax 97 Fuel', amount: 170, type: 'EXPENSE', category: 'Fuel & Transport' },
+                { id: 't2', date: `${y}-${m}-02`, desc: 'Condo Rental', amount: 1450, type: 'EXPENSE', category: 'Housing & Rent' },
+                { id: 't3', date: `${y}-${m}-05`, desc: 'Jaya Grocer Supplies', amount: 390, type: 'EXPENSE', category: 'Groceries' },
+                { id: 't4', date: `${y}-${m}-08`, desc: 'PETRONAS Primax Fuel', amount: 170, type: 'EXPENSE', category: 'Fuel & Transport' },
                 { id: 't5', date: `${y}-${m}-12`, desc: 'Fibre Broadband & Mobile', amount: 149, type: 'EXPENSE', category: 'Bills & Utilities' },
-                { id: 't6', date: `${y}-${m}-15`, desc: 'Uniqlo Executive Wear', amount: 280, type: 'EXPENSE', category: 'Shopping' },
-                { id: 't7', date: `${y}-${m}-18`, desc: 'Wagyu Omakase Dinner', amount: 350, type: 'EXPENSE', category: 'Food & Dining' },
-                { id: 't8', date: `${y}-${m}-22`, desc: 'Index Fund Investment', amount: 1000, type: 'EXPENSE', category: 'Savings & Investments' }
+                { id: 't6', date: `${y}-${m}-22`, desc: 'Index Fund Investment', amount: 1000, type: 'EXPENSE', category: 'Savings & Investments' }
             ];
         }
 
@@ -804,6 +1029,7 @@
             document.getElementById('month-picker-input').value = state.activeMonth;
             document.getElementById('setting-currency-select').value = state.currency;
             document.getElementById('form-tx-date').value = getLocalTodayStr();
+            document.getElementById('setting-gemini-key').value = localStorage.getItem(GEMINI_KEY_STORAGE) || '';
             populateCategoryDropdowns();
             syncPrivacyVisuals();
         }
@@ -829,6 +1055,7 @@
             renderHeroDashboard();
             renderTransactionsLog();
             renderBudgetsTab();
+            renderDebtVault();
             renderAnalyticsTab();
             applyPrivacyMasking();
         }
@@ -863,6 +1090,7 @@
             const txs = state.months[state.activeMonth] || [];
 
             let totalIncome = 0;
+            let earnedIncome = 0;
             let totalExpenses = 0;
             let savingsAllocated = 0;
 
@@ -870,6 +1098,9 @@
                 const amt = Number(t.amount) || 0;
                 if (t.type === 'INCOME') {
                     totalIncome += amt;
+                    if (!t.isLoanRoll && t.category !== 'Loan Roll / Cash-Out') {
+                        earnedIncome += amt;
+                    }
                 } else {
                     totalExpenses += amt;
                     if (t.category === 'Savings & Investments') {
@@ -914,7 +1145,6 @@
             bar.style.width = `${pct}%`;
             pctLabel.textContent = `${pct}% Spent`;
 
-            // TOOTHLESS MOOD ENGINE & COLOR ACCENTS
             const eyeLeft = document.getElementById('hero-eye-left');
             const eyeRight = document.getElementById('hero-eye-right');
             const miniPupilLeft = document.getElementById('mini-pupil-left');
@@ -923,18 +1153,18 @@
             const statusBadge = document.getElementById('toothless-status-badge');
             const brandAccent = document.getElementById('header-brand-accent');
 
-            let activeColor = "#10B981"; // Emerald
+            let activeColor = "#10B981";
             let badgeStyle = "bg-emeraldglow/10 text-emeraldglow border-emeraldglow/30";
             let statusMessage = "Stable Flight";
 
             if (pct > 95) {
-                activeColor = "#E11D48"; // Crimson Red
+                activeColor = "#E11D48";
                 badgeStyle = "bg-tailfincrimson/15 text-tailfincrimson border-tailfincrimson/40";
                 statusMessage = "Critical Overheat";
                 bar.className = "h-full rounded-full bg-tailfincrimson glow-crimson transition-all duration-500";
                 pctLabel.className = "text-tailfincrimson font-mono font-bold";
             } else if (pct >= 75) {
-                activeColor = "#A855F7"; // Plasma Violet
+                activeColor = "#A855F7";
                 badgeStyle = "bg-plasmaglow/15 text-plasmaglow border-plasmaglow/40";
                 statusMessage = "Plasma Charge";
                 bar.className = "h-full rounded-full bg-plasmaglow glow-plasma transition-all duration-500";
@@ -944,7 +1174,6 @@
                 pctLabel.className = "text-emeraldglow font-mono font-bold";
             }
 
-            // Apply Eye Glow Colors
             if (eyeLeft) eyeLeft.setAttribute('fill', activeColor);
             if (eyeRight) eyeRight.setAttribute('fill', activeColor);
             if (miniPupilLeft) miniPupilLeft.setAttribute('fill', activeColor);
@@ -954,14 +1183,335 @@
             badgeText.textContent = statusMessage;
             brandAccent.style.color = activeColor;
 
-            // Savings rate counts unspent income PLUS transfers into Savings & Investments
-            const totalSaved = (totalIncome - totalExpenses) + savingsAllocated;
-            const savingsRate = totalIncome > 0 ? ((totalSaved / totalIncome) * 100).toFixed(1) : '0.0';
+            // Savings rate excludes borrowed loan roll cash-outs so Toothless stays honest
+            const totalSaved = (earnedIncome - totalExpenses) + savingsAllocated;
+            const savingsRate = earnedIncome > 0 ? ((totalSaved / earnedIncome) * 100).toFixed(1) : '0.0';
             document.getElementById('overview-savings-rate').textContent = `${savingsRate}% Saved`;
 
-            // Recent 3 Items (sorted newest first)
             const sortedRecent = [...txs].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
             document.getElementById('dashboard-recent-list').innerHTML = buildTxListHtml(sortedRecent.slice(0, 3));
+        }
+
+        /**
+         * SEPARATE DEBT & BNPL VAULT
+         */
+        function renderDebtVault() {
+            const debts = state.debts || [];
+            let totalDebt = 0;
+            let totalMonthly = 0;
+
+            debts.forEach(d => {
+                totalDebt += Number(d.balance) || 0;
+                totalMonthly += Number(d.monthlyPayment) || 0;
+            });
+
+            document.getElementById('overview-total-debt').textContent = formatCurrency(totalDebt);
+            document.getElementById('overview-debt-monthly').textContent = `${formatCurrency(totalMonthly)}/mo`;
+            document.getElementById('debt-vault-total').textContent = formatCurrency(totalDebt);
+            document.getElementById('debt-vault-monthly').textContent = formatCurrency(totalMonthly);
+
+            const listEl = document.getElementById('debt-vault-list');
+            if (debts.length === 0) {
+                listEl.innerHTML = `<div class="p-6 text-center text-xs text-slate-400 bg-cardbg rounded-2xl border border-borderdark space-y-2">
+                    <i class="fa-solid fa-shield-check text-emeraldglow text-xl"></i>
+                    <p>No active debts tracked yet. Tap <strong class="text-white">+ Add Debt</strong> to log your SLoan, SPayLater, GrabPayLater, TikTok, or Credit Cards separately.</p>
+                </div>`;
+                return;
+            }
+
+            listEl.innerHTML = debts.map(d => {
+                const typeBadgeColor = d.type === 'Credit Card'
+                    ? 'text-goldaccent bg-goldaccent/10 border-goldaccent/30'
+                    : d.type === 'Cash Loan'
+                        ? 'text-plasmaglow bg-plasmaglow/10 border-plasmaglow/30'
+                        : 'text-tailfincrimson bg-tailfincrimson/10 border-tailfincrimson/30';
+
+                return `
+                    <div class="bg-cardbg p-4 rounded-2xl border border-borderdark space-y-3">
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-2">
+                                    <h4 class="font-bold text-sm text-white truncate">${escapeHtml(d.name)}</h4>
+                                    <span class="px-2 py-0.5 rounded-md text-[9px] font-mono font-bold uppercase border ${typeBadgeColor}">${escapeHtml(d.type)}</span>
+                                </div>
+                                <span class="text-[10px] font-mono text-slate-400 block mt-1">
+                                    Est. ${formatCurrency(d.monthlyPayment || 0)}/mo ${d.monthsLeft ? `• ${d.monthsLeft} mos left` : ''}
+                                </span>
+                            </div>
+
+                            <div class="text-right flex-shrink-0">
+                                <span class="text-sm font-black font-mono text-tailfincrimson privacy-target block">${formatCurrency(d.balance)}</span>
+                                <div class="flex items-center justify-end gap-2 mt-1">
+                                    <button type="button" onclick="editDebt('${d.id}')" class="text-slate-500 hover:text-white text-[11px]"><i class="fa-solid fa-pen"></i></button>
+                                    <button type="button" onclick="deleteDebt('${d.id}')" class="text-slate-500 hover:text-tailfincrimson text-[11px]"><i class="fa-solid fa-trash"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2 pt-2 border-t border-borderdark/70">
+                            <button type="button" onclick="openDebtActionModal('${d.id}', 'PAY')" class="py-2 px-3 bg-emeraldglow/15 hover:bg-emeraldglow hover:text-obsidian text-emeraldglow border border-emeraldglow/30 font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition">
+                                <i class="fa-solid fa-check"></i> Pay Monthly
+                            </button>
+                            <button type="button" onclick="openDebtActionModal('${d.id}', 'ROLL')" class="py-2 px-3 bg-plasmaglow/15 hover:bg-plasmaglow hover:text-white text-plasmaglow border border-plasmaglow/30 font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition">
+                                <i class="fa-solid fa-arrows-rotate"></i> Roll / Cash Out
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openAddDebtModal() {
+            document.getElementById('form-debt-id').value = '';
+            document.getElementById('form-debt-name').value = '';
+            document.getElementById('form-debt-type').value = 'BNPL';
+            document.getElementById('form-debt-balance').value = '';
+            document.getElementById('form-debt-monthly').value = '';
+            document.getElementById('form-debt-months').value = '';
+            document.getElementById('debt-modal-title').innerHTML = `<i class="fa-solid fa-scale-unbalanced text-tailfincrimson"></i> Add Previous Debt`;
+            document.getElementById('modal-debt').classList.remove('hidden');
+        }
+
+        function closeDebtModal() {
+            document.getElementById('modal-debt').classList.add('hidden');
+        }
+
+        function editDebt(id) {
+            const d = (state.debts || []).find(x => x.id === id);
+            if (!d) return;
+            document.getElementById('form-debt-id').value = d.id;
+            document.getElementById('form-debt-name').value = d.name;
+            document.getElementById('form-debt-type').value = d.type || 'BNPL';
+            document.getElementById('form-debt-balance').value = d.balance;
+            document.getElementById('form-debt-monthly').value = d.monthlyPayment || '';
+            document.getElementById('form-debt-months').value = d.monthsLeft || '';
+            document.getElementById('debt-modal-title').innerHTML = `<i class="fa-solid fa-pen text-emeraldglow"></i> Edit Debt`;
+            document.getElementById('modal-debt').classList.remove('hidden');
+        }
+
+        function handleSaveDebt(e) {
+            e.preventDefault();
+            const id = document.getElementById('form-debt-id').value || ('debt_' + Date.now());
+            const name = document.getElementById('form-debt-name').value.trim();
+            const type = document.getElementById('form-debt-type').value;
+            const balance = parseFloat(document.getElementById('form-debt-balance').value) || 0;
+            const monthlyPayment = parseFloat(document.getElementById('form-debt-monthly').value) || 0;
+            const monthsLeft = parseInt(document.getElementById('form-debt-months').value) || 0;
+
+            if (!name) return;
+
+            const item = { id, name, type, balance, monthlyPayment, monthsLeft };
+            const idx = state.debts.findIndex(d => d.id === id);
+            if (idx >= 0) state.debts[idx] = item;
+            else state.debts.push(item);
+
+            saveState();
+            renderApp();
+            closeDebtModal();
+            showToast("Debt saved to vault!");
+        }
+
+        function deleteDebt(id) {
+            if (confirm("Remove this debt from your vault?")) {
+                state.debts = state.debts.filter(d => d.id !== id);
+                saveState();
+                renderApp();
+                showToast("Debt removed.");
+            }
+        }
+
+        function openDebtActionModal(id, mode) {
+            const d = state.debts.find(x => x.id === id);
+            if (!d) return;
+
+            document.getElementById('debt-action-id').value = id;
+            document.getElementById('debt-action-mode').value = mode;
+            document.getElementById('debt-action-date').value = getLocalTodayStr();
+
+            const titleEl = document.getElementById('debt-action-title');
+            const descEl = document.getElementById('debt-action-desc');
+            const btnEl = document.getElementById('debt-action-submit-btn');
+            const amtEl = document.getElementById('debt-action-amount');
+
+            if (mode === 'PAY') {
+                titleEl.textContent = `Pay ${d.name}`;
+                descEl.textContent = `Deducts this amount from your ${d.name} debt AND logs an expense in your monthly cash balance.`;
+                btnEl.className = "w-full py-2.5 bg-emeraldglow text-obsidian font-extrabold uppercase text-xs rounded-xl";
+                btnEl.textContent = "Confirm Payment";
+                amtEl.value = d.monthlyPayment > 0 ? d.monthlyPayment : '';
+            } else {
+                titleEl.textContent = `Roll / Cash Out: ${d.name}`;
+                descEl.textContent = `Adds this amount back to your ${d.name} debt AND adds cash to your monthly balance (excluded from Savings Rate).`;
+                btnEl.className = "w-full py-2.5 bg-plasmaglow text-white font-extrabold uppercase text-xs rounded-xl";
+                btnEl.textContent = "Confirm Cash-Out";
+                amtEl.value = '';
+            }
+
+            document.getElementById('modal-debt-action').classList.remove('hidden');
+            setTimeout(() => amtEl.focus(), 50);
+        }
+
+        function closeDebtActionModal() {
+            document.getElementById('modal-debt-action').classList.add('hidden');
+        }
+
+        function handleDebtActionSubmit(e) {
+            e.preventDefault();
+            const id = document.getElementById('debt-action-id').value;
+            const mode = document.getElementById('debt-action-mode').value;
+            const amount = parseFloat(document.getElementById('debt-action-amount').value);
+            const date = document.getElementById('debt-action-date').value;
+
+            const d = state.debts.find(x => x.id === id);
+            if (!d || isNaN(amount) || amount <= 0 || !date) return;
+
+            const targetMonth = date.slice(0, 7) || state.activeMonth;
+            if (!state.months[targetMonth]) state.months[targetMonth] = [];
+
+            if (mode === 'PAY') {
+                d.balance = Math.max(0, Number(d.balance) - amount);
+                if (d.monthsLeft && d.monthsLeft > 0) d.monthsLeft -= 1;
+
+                state.months[targetMonth].unshift({
+                    id: 'tx_' + Date.now(),
+                    date,
+                    desc: `${d.name} Repayment`,
+                    amount,
+                    type: 'EXPENSE',
+                    category: d.type === 'Credit Card' ? 'Credit Card' : 'BNPL & Debt Repayment'
+                });
+                showToast(`Paid ${formatCurrency(amount)} to ${d.name}`);
+            } else {
+                d.balance = Number(d.balance) + amount;
+
+                state.months[targetMonth].unshift({
+                    id: 'tx_' + Date.now(),
+                    date,
+                    desc: `${d.name} Roll / Cash-Out`,
+                    amount,
+                    type: 'INCOME',
+                    category: 'Loan Roll / Cash-Out',
+                    isLoanRoll: true
+                });
+                showToast(`Rolled ${formatCurrency(amount)} from ${d.name}`);
+            }
+
+            saveState();
+            renderApp();
+            closeDebtActionModal();
+        }
+
+        /**
+         * GEMINI AI FINANCIAL CONSULTANT
+         */
+        function saveGeminiKey() {
+            const key = document.getElementById('setting-gemini-key').value.trim();
+            if (key) {
+                localStorage.setItem(GEMINI_KEY_STORAGE, key);
+                showToast("Gemini API key saved!");
+            } else {
+                localStorage.removeItem(GEMINI_KEY_STORAGE);
+                showToast("Gemini API key cleared.");
+            }
+        }
+
+        function openAiModal() {
+            document.getElementById('modal-ai').classList.remove('hidden');
+        }
+
+        function closeAiModal() {
+            document.getElementById('modal-ai').classList.add('hidden');
+        }
+
+        function askAiQuick(text) {
+            document.getElementById('ai-prompt-input').value = text;
+            handleAiSubmit(new Event('submit'));
+        }
+
+        function buildFinancialSnapshot() {
+            const txs = state.months[state.activeMonth] || [];
+            let inc = 0, exp = 0, roll = 0;
+            const catTotals = {};
+
+            txs.forEach(t => {
+                const a = Number(t.amount) || 0;
+                if (t.type === 'INCOME') {
+                    inc += a;
+                    if (t.isLoanRoll || t.category === 'Loan Roll / Cash-Out') roll += a;
+                } else {
+                    exp += a;
+                    catTotals[t.category] = (catTotals[t.category] || 0) + a;
+                }
+            });
+
+            const totalDebt = (state.debts || []).reduce((s, d) => s + (Number(d.balance) || 0), 0);
+            return JSON.stringify({
+                currency: state.currency,
+                activeMonth: state.activeMonth,
+                totalIncomeInflow: inc,
+                loanRollCashOut: roll,
+                totalExpenses: exp,
+                remainingCashBalance: inc - exp,
+                spendingByCategory: catTotals,
+                debtVaultTotal: totalDebt,
+                debts: state.debts
+            });
+        }
+
+        async function handleAiSubmit(e) {
+            if (e && e.preventDefault) e.preventDefault();
+            const input = document.getElementById('ai-prompt-input');
+            const question = input.value.trim();
+            if (!question) return;
+
+            const apiKey = localStorage.getItem(GEMINI_KEY_STORAGE);
+            const chatBox = document.getElementById('ai-chat-messages');
+
+            chatBox.innerHTML += `<div class="bg-plasmaglow/20 border border-plasmaglow/30 p-3 rounded-2xl text-xs text-white ml-8">${escapeHtml(question)}</div>`;
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            if (!apiKey) {
+                chatBox.innerHTML += `<div class="bg-obsidian border border-tailfincrimson/40 p-3 rounded-2xl text-xs text-slate-300 mr-4">
+                    Please add your free Gemini API key in <strong class="text-white">Settings (top-right sliders icon)</strong> first. You can get one free at <span class="text-emeraldglow">aistudio.google.com/apikey</span>.
+                </div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+                return;
+            }
+
+            const loadingId = 'ai_load_' + Date.now();
+            chatBox.innerHTML += `<div id="${loadingId}" class="bg-obsidian border border-borderdark p-3 rounded-2xl text-xs text-slate-400 mr-4 font-mono">Analyzing your ledger...</div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            try {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: `You are NightFury AI, a concise, practical, non-judgmental personal finance coach for a Malaysian user. Use their live ledger JSON below to give concrete, actionable advice in short bullet points.\n\nLIVE LEDGER:\n${buildFinancialSnapshot()}\n\nUSER QUESTION: ${question}`
+                            }]
+                        }]
+                    })
+                });
+
+                const data = await res.json();
+                const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text
+                    || data?.error?.message
+                    || "Could not get a response. Please check your API key.";
+
+                const loadEl = document.getElementById(loadingId);
+                if (loadEl) {
+                    loadEl.className = "bg-obsidian border border-borderdark p-3 rounded-2xl text-xs text-slate-200 mr-4 leading-relaxed whitespace-pre-wrap";
+                    loadEl.textContent = reply;
+                }
+            } catch (err) {
+                const loadEl = document.getElementById(loadingId);
+                if (loadEl) loadEl.textContent = "Network error reaching Gemini. Check your connection or API key.";
+            }
+
+            chatBox.scrollTop = chatBox.scrollHeight;
         }
 
         /**
@@ -996,7 +1546,7 @@
                 const catObj = getCategoryMeta(t.category, t.type);
                 const isIncome = t.type === 'INCOME';
                 const sign = isIncome ? '+' : '-';
-                const amtColor = isIncome ? 'text-emeraldglow' : 'text-slate-200';
+                const amtColor = isIncome ? (t.isLoanRoll ? 'text-goldaccent' : 'text-emeraldglow') : 'text-slate-200';
 
                 return `
                     <div class="flex items-center justify-between p-3.5 bg-cardbg hover:bg-charcoal rounded-xl border border-borderdark/80 transition">
@@ -1136,7 +1686,6 @@
 
             document.getElementById('insight-projected').textContent = formatCurrency(projected);
 
-            // Doughnut Chart
             const categories = getAllCategories();
             const doughnutLabels = [];
             const doughnutData = [];
@@ -1175,7 +1724,6 @@
                 }
             });
 
-            // 6-Month Bar History
             const historyLabels = [];
             const historyIncome = [];
             const historyExpense = [];
@@ -1271,9 +1819,11 @@
             if (!desc || isNaN(amount) || amount <= 0 || !date) return;
 
             const targetMonth = date.slice(0, 7) || state.activeMonth;
-            const item = { id, desc, amount, category, date, type };
+            const item = {
+                id, desc, amount, category, date, type,
+                isLoanRoll: category === 'Loan Roll / Cash-Out'
+            };
 
-            // Remove from any previous month if date was edited across months
             Object.keys(state.months).forEach(mKey => {
                 if (mKey !== targetMonth && Array.isArray(state.months[mKey])) {
                     state.months[mKey] = state.months[mKey].filter(t => t.id !== id);
@@ -1408,6 +1958,7 @@
                     const imported = JSON.parse(evt.target.result);
                     if (imported && imported.months) {
                         state = { ...state, ...imported, hasInitialized: true };
+                        if (!Array.isArray(state.debts)) state.debts = [];
                         saveState();
                         initializeUI();
                         renderApp();
@@ -1431,7 +1982,7 @@
         }
 
         function resetAllData() {
-            if (confirm("Reset ALL budget data?")) {
+            if (confirm("Reset ALL budget & debt data?")) {
                 localStorage.removeItem(STORAGE_KEY);
                 const curMonth = getCurrentMonthKey();
                 state = {
@@ -1441,6 +1992,7 @@
                     activeMonth: curMonth,
                     categoryBudgets: {},
                     customCategories: [],
+                    debts: [],
                     months: { [curMonth]: [] }
                 };
                 getAllCategories().forEach(c => {
@@ -1454,7 +2006,7 @@
         }
 
         function switchTab(tabId) {
-            const tabs = ['tab-dashboard', 'tab-log', 'tab-budgets', 'tab-analytics', 'tab-settings'];
+            const tabs = ['tab-dashboard', 'tab-log', 'tab-budgets', 'tab-analytics', 'tab-debts', 'tab-settings'];
             tabs.forEach(key => {
                 const viewEl = document.getElementById(key.replace('tab-', 'view-'));
                 const btnEl = document.getElementById(`nav-btn-${key}`);
