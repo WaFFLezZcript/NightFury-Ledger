@@ -1,20 +1,20 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="en" class="h-full bg-[#07090D]">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="NightFury">
-    <title>NightFury Ledger - Executive Budget Tracker</title>
+    <title>NightFury Ledger - Executive Stealth Budget</title>
 
     <!-- Dynamic iOS Touch Icon Generator -->
     <link id="apple-touch-icon" rel="apple-touch-icon" href="">
 
-    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
 
     <!-- FontAwesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -30,18 +30,18 @@
                 extend: {
                     fontFamily: {
                         sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace']
+                        mono: ['JetBrains Mono', 'monospace'],
+                        brand: ['Cinzel', 'serif']
                     },
                     colors: {
-                        obsidian: '#07090C',
-                        charcoal: '#11151C',
-                        cardbg: '#151A23',
-                        borderdark: '#1E2633',
+                        obsidian: '#07090D',
+                        charcoal: '#11151F',
+                        cardbg: '#161C28',
+                        borderdark: '#212B3E',
                         emeraldglow: '#10B981',
-                        emeraldlight: '#34D399',
-                        plasmaglow: '#8B5CF6',
-                        plasimacyan: '#38BDF8',
-                        tailfincrimson: '#E11D48'
+                        plasmaglow: '#A855F7',
+                        tailfincrimson: '#E11D48',
+                        goldaccent: '#F59E0B'
                     }
                 }
             }
@@ -50,197 +50,240 @@
 
     <style>
         :root {
-            --sat: env(safe-area-inset-top);
-            --sab: env(safe-area-inset-bottom);
+            --sat: env(safe-area-inset-top, 0px);
+            --sab: env(safe-area-inset-bottom, 0px);
         }
 
         body {
-            background-color: #07090C;
+            background-color: #07090D;
             color: #E2E8F0;
-            font-feature-settings: "cv02", "cv03", "cv04", "cv11";
             -webkit-tap-highlight-color: transparent;
             user-select: none;
             padding-top: var(--sat);
-            padding-bottom: calc(var(--sab) + 80px);
+            padding-bottom: calc(var(--sab) + 85px);
         }
 
-        /* Tactical Low-Opacity Dragon Scale SVG Pattern */
+        /* Tactical Geometric Dragon Scale Overlay Pattern */
         .scale-pattern {
-            background-image: url("data:image/svg+xml,%3Csvg width='28' height='48' viewBox='0 0 28 48' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M14 0l14 12v24L14 48 0 36V12z' fill='none' stroke='%231E2633' stroke-width='0.6' stroke-opacity='0.45'/%3E%3C/svg%3E");
-            background-size: 28px 48px;
+            background-image: radial-gradient(rgba(16, 185, 129, 0.04) 1px, transparent 0),
+                              url("data:image/svg+xml,%3Csvg width='36' height='60' viewBox='0 0 36 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M18 0 L36 15 L36 45 L18 60 L0 45 L0 15 Z' fill='none' stroke='%231E293B' stroke-width='0.8' stroke-opacity='0.4'/%3E%3C/svg%3E");
+            background-size: 24px 24px, 36px 60px;
         }
 
-        /* Metallic Glow Utilities */
-        .glow-emerald { box-shadow: 0 0 25px -4px rgba(16, 185, 129, 0.4); }
-        .glow-plasma { box-shadow: 0 0 25px -4px rgba(139, 92, 246, 0.4); }
-        .glow-crimson { box-shadow: 0 0 25px -4px rgba(225, 29, 72, 0.45); }
-        .text-glow-emerald { text-shadow: 0 0 14px rgba(16, 185, 129, 0.6); }
+        /* Glow Utility Classes */
+        .glow-emerald { box-shadow: 0 0 25px -2px rgba(16, 185, 129, 0.45); }
+        .glow-plasma { box-shadow: 0 0 25px -2px rgba(168, 85, 247, 0.45); }
+        .glow-crimson { box-shadow: 0 0 25px -2px rgba(225, 29, 72, 0.5); }
 
-        /* Privacy Masking Blur */
+        .text-glow-emerald { text-shadow: 0 0 12px rgba(16, 185, 129, 0.6); }
+        .text-glow-plasma { text-shadow: 0 0 12px rgba(168, 85, 247, 0.6); }
+        .text-glow-crimson { text-shadow: 0 0 12px rgba(225, 29, 72, 0.6); }
+
+        /* Masking Blur for Privacy Mode */
         .privacy-masked {
-            filter: blur(7px);
-            opacity: 0.6;
+            filter: blur(8px);
+            opacity: 0.45;
             transition: filter 0.25s ease, opacity 0.25s ease;
         }
 
         /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: #07090C; }
-        ::-webkit-scrollbar-thumb { background: #1E2633; border-radius: 4px; }
+        ::-webkit-scrollbar-track { background: #07090D; }
+        ::-webkit-scrollbar-thumb { background: #212B3E; border-radius: 4px; }
 
-        /* iOS Bottom Sheet Animations */
-        .modal-overlay { transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
-        .modal-sheet { transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-        .modal-overlay.hidden-state { opacity: 0; pointer-events: none; }
-        .modal-sheet.hidden-state { transform: translateY(100%); }
-
-        /* Eye pupil blink transition */
+        /* Dragon Eye Pupil Animations */
         .eye-pupil {
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), fill 0.4s ease, filter 0.4s ease;
             transform-origin: center;
         }
         .blinking .eye-pupil {
-            transform: scaleY(0.05);
-            opacity: 0.3;
+            transform: scaleY(0.04);
+            opacity: 0.2;
+        }
+
+        /* Pulse glow animation for budget state */
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.85; filter: drop-shadow(0 0 6px var(--glow-color)); }
+            50% { opacity: 1; filter: drop-shadow(0 0 14px var(--glow-color)); }
+        }
+        .toothless-eye-glow {
+            animation: pulseGlow 3s infinite ease-in-out;
         }
     </style>
 </head>
 <body class="h-full scale-pattern min-h-screen font-sans antialiased selection:bg-emeraldglow selection:text-obsidian">
 
-    <!-- EXECUTIVE HEADER -->
-    <header class="sticky top-0 z-30 bg-obsidian/90 backdrop-blur-xl border-b border-borderdark/80 px-4 sm:px-6 py-3.5">
+    <!-- TOP HEADER -->
+    <header class="sticky top-0 z-40 bg-obsidian/90 backdrop-blur-2xl border-b border-borderdark/80 px-4 sm:px-6 py-3.5">
         <div class="max-w-md mx-auto flex items-center justify-between">
             
-            <!-- BRAND LOGO WITH SLEEK GEOMETRIC TOOTHLESS HEAD -->
+            <!-- BRAND LOGO WITH TOOTHLESS BLINK TRIGGER -->
             <div class="flex items-center gap-3">
-                <button onclick="togglePrivacyMode()" title="Click to Toggle Privacy Mode (Toothless Blink)" class="relative p-1.5 rounded-xl bg-charcoal border border-borderdark hover:border-emeraldglow/40 transition group">
-                    <svg id="header-toothless-svg" class="w-8 h-8 transition-transform group-active:scale-95" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Head Silhouette -->
-                        <path d="M50 10 L68 22 L85 30 L80 48 L88 62 L74 72 L62 90 L50 82 L38 90 L26 72 L12 62 L20 48 L15 30 L32 22 Z" fill="#11151C" stroke="#1E2633" stroke-width="3.5" stroke-linejoin="round"/>
-                        <!-- Ear Nubs / Horn Silhouette -->
-                        <path d="M32 22 L22 8 L38 18 M68 22 L78 8 L62 18" stroke="#10B981" stroke-width="3" stroke-linecap="round"/>
-                        <!-- Left Eye Socket & Glowing Emerald Pupil -->
-                        <polygon points="30,42 45,45 34,54" fill="#07090C" stroke="#1E2633" stroke-width="1.5"/>
-                        <ellipse id="pupil-left" class="eye-pupil" cx="36" cy="46" rx="3.5" ry="6.5" fill="#10B981"/>
-                        <!-- Right Eye Socket & Glowing Emerald Pupil -->
-                        <polygon points="70,42 55,45 66,54" fill="#07090C" stroke="#1E2633" stroke-width="1.5"/>
-                        <ellipse id="pupil-right" class="eye-pupil" cx="64" cy="46" rx="3.5" ry="6.5" fill="#10B981"/>
+                <button type="button" onclick="togglePrivacyMode()" title="Tap Toothless to Toggle Privacy Mode" class="relative p-1.5 rounded-xl bg-charcoal border border-borderdark hover:border-emeraldglow/50 transition group active:scale-95">
+                    <!-- TOOTHLESS HEAD MINI SVG -->
+                    <svg id="header-toothless-svg" class="w-8 h-8 transition-transform" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M50 10 L68 22 L85 30 L80 48 L88 62 L74 72 L62 90 L50 82 L38 90 L26 72 L12 62 L20 48 L15 30 L32 22 Z" fill="#11151F" stroke="#212B3E" stroke-width="3"/>
+                        <path d="M32 22 L20 6 L38 16 M68 22 L80 6 L62 16" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" id="mini-horn-left"/>
+                        <ellipse id="mini-pupil-left" class="eye-pupil" cx="36" cy="46" rx="4" ry="7" fill="#10B981"/>
+                        <ellipse id="mini-pupil-right" class="eye-pupil" cx="64" cy="46" rx="4" ry="7" fill="#10B981"/>
                     </svg>
-                    <!-- Small Privacy Lock Pill indicator -->
-                    <span id="privacy-lock-badge" class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-borderdark text-slate-400 text-[8px] rounded-full flex items-center justify-center font-bold">
-                        <i class="fa-solid fa-lock-open"></i>
+                    <span id="privacy-lock-badge" class="absolute -top-1 -right-1 w-4 h-4 bg-borderdark text-emeraldglow text-[9px] rounded-full flex items-center justify-center font-bold border border-charcoal">
+                        <i class="fa-solid fa-eye"></i>
                     </span>
                 </button>
 
                 <div>
-                    <h1 class="font-black text-base tracking-tight text-white flex items-center gap-1 leading-none">
-                        Night<span class="text-emeraldglow text-glow-emerald">Fury</span>
+                    <h1 class="font-black text-base tracking-tight text-white font-brand flex items-center gap-1.5 leading-none">
+                        NIGHT<span id="header-brand-accent" class="text-emeraldglow text-glow-emerald">FURY</span>
                     </h1>
-                    <p class="text-[9px] font-mono tracking-widest text-slate-400 uppercase mt-0.5">Stealth Ledger</p>
+                    <p class="text-[9px] font-mono tracking-widest text-slate-400 uppercase mt-0.5">Stealth Ledger PWA</p>
                 </div>
             </div>
 
-            <!-- RIGHT HEADER ACTIONS: MONTH PICKER & SETTINGS -->
+            <!-- MONTH SELECTOR & SETTINGS -->
             <div class="flex items-center gap-2">
-                <!-- Month Switcher Button -->
                 <div class="relative">
                     <input type="month" id="month-picker-input" onchange="changeActiveMonth(this.value)" class="absolute inset-0 opacity-0 w-full h-full cursor-pointer z-10">
-                    <div class="px-2.5 py-1.5 bg-charcoal border border-borderdark rounded-xl flex items-center gap-1.5 text-xs font-semibold text-slate-200 hover:border-slate-500 transition">
-                        <i class="fa-solid fa-calendar-day text-emeraldglow text-[11px]"></i>
+                    <div class="px-3 py-1.5 bg-charcoal border border-borderdark rounded-xl flex items-center gap-1.5 text-xs font-bold text-slate-200 hover:border-slate-500 transition">
+                        <i class="fa-solid fa-calendar-alt text-emeraldglow text-[11px]" id="header-calendar-icon"></i>
                         <span id="header-month-label">Nov 2026</span>
                         <i class="fa-solid fa-chevron-down text-[9px] text-slate-500"></i>
                     </div>
                 </div>
 
-                <!-- Settings Gear Icon -->
-                <button onclick="openSettingsModal()" class="w-8 h-8 rounded-xl bg-charcoal border border-borderdark hover:border-emeraldglow/40 text-slate-300 hover:text-white flex items-center justify-center text-xs transition">
-                    <i class="fa-solid fa-gear"></i>
+                <button type="button" onclick="switchTab('tab-settings')" class="w-8 h-8 rounded-xl bg-charcoal border border-borderdark hover:border-emeraldglow/40 text-slate-300 hover:text-white flex items-center justify-center text-xs transition">
+                    <i class="fa-solid fa-sliders"></i>
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- MAIN APP CONTAINER -->
+    <!-- MAIN CONTENT CONTAINER -->
     <main class="max-w-md mx-auto px-4 pt-4 space-y-5">
 
-        <!-- VIEW 1: OVERVIEW DASHBOARD -->
-        <section id="view-overview" class="space-y-5">
+        <!-- ================= TAB 1: DASHBOARD ================= -->
+        <section id="view-dashboard" class="space-y-5">
             
-            <!-- HERO BALANCE CARD WITH NIGHT FURY WINGS WATERMARK -->
-            <div class="bg-gradient-to-b from-cardbg to-charcoal p-5 rounded-2xl border border-borderdark shadow-2xl relative overflow-hidden">
+            <!-- HERO TOOTHLESS MOOD CARD -->
+            <div id="hero-toothless-card" class="bg-gradient-to-b from-cardbg via-charcoal to-obsidian p-6 rounded-3xl border border-borderdark shadow-2xl relative overflow-hidden transition-all duration-500">
                 
-                <!-- Custom Geometric Wings Watermark SVG -->
-                <svg class="absolute -right-10 -bottom-8 w-60 h-60 opacity-[0.06] text-emeraldglow pointer-events-none" viewBox="0 0 100 100" fill="currentColor">
-                    <path d="M50 30 C 65 10, 85 5, 100 25 C 85 45, 70 55, 50 65 C 30 55, 15 45, 0 25 C 15 5, 35 10, 50 30 Z"/>
-                    <path d="M50 40 L68 75 L50 95 L32 75 Z"/>
-                </svg>
+                <!-- Dynamic SVG Background Glow -->
+                <div id="hero-glow-backdrop" class="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-emeraldglow/10 blur-3xl pointer-events-none transition-all duration-500"></div>
 
-                <div class="flex items-center justify-between text-xs text-slate-400 mb-1">
-                    <span class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-400">Net Monthly Balance</span>
-                    <span id="overview-status-pill" class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-emeraldglow/10 text-emeraldglow border border-emeraldglow/30">
-                        Stable Flight
-                    </span>
-                </div>
-
-                <!-- Main Net Balance -->
-                <div class="text-3xl font-black text-white tracking-tight font-mono my-1 privacy-target" id="hero-net-balance">
-                    RM 0.00
-                </div>
-
-                <!-- Daily Safe To Spend Badge -->
-                <div class="flex items-center gap-2 mt-2 mb-4 text-[11px] text-slate-400">
-                    <span class="px-2 py-0.5 rounded-lg bg-obsidian border border-borderdark font-mono text-slate-300">
-                        Safe-to-Spend: <strong id="hero-daily-safe" class="text-emeraldlight font-bold privacy-target">RM 0.00</strong>/day
-                    </span>
-                </div>
-
-                <!-- PLASMA CHARGE METER (BUDGET UTILIZATION) -->
-                <div class="space-y-1.5 pt-2 border-t border-borderdark/60">
-                    <div class="flex justify-between text-[11px] font-bold">
-                        <span class="text-slate-400">Budget Energy</span>
-                        <span id="hero-budget-pct" class="text-emeraldglow font-mono">0% Used</span>
+                <!-- TOP CARD BADGES -->
+                <div class="flex items-center justify-between text-xs mb-3">
+                    <div class="flex items-center gap-2">
+                        <span id="toothless-status-badge" class="px-2.5 py-1 rounded-full text-[10px] font-mono font-black uppercase tracking-wider bg-emeraldglow/10 text-emeraldglow border border-emeraldglow/30 flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emeraldglow animate-pulse"></span>
+                            <span id="status-badge-text">Stable Flight</span>
+                        </span>
                     </div>
-                    <div class="w-full bg-obsidian rounded-full h-3 p-0.5 border border-borderdark overflow-hidden">
+                    <span class="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest">Monthly Net</span>
+                </div>
+
+                <!-- ARTISTIC TOOTHLESS HEAD VECTOR & EYE MOOD DISPLAY -->
+                <div class="my-4 flex items-center justify-between gap-4 bg-obsidian/60 p-4 rounded-2xl border border-borderdark/80 backdrop-blur-md">
+                    
+                    <!-- SVG TOOTHLESS HEAD -->
+                    <button type="button" onclick="togglePrivacyMode()" class="relative group cursor-pointer flex-shrink-0" title="Tap to Toggle Toothless Privacy Mode">
+                        <svg id="hero-toothless-svg" class="w-24 h-24 transition-transform group-hover:scale-105" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Outer Head Horn Appendages (Toothless Ear Nubs) -->
+                            <path d="M 38 30 L 15 5 L 42 22 Z" fill="#11151F" stroke="#212B3E" stroke-width="2"/>
+                            <path d="M 82 30 L 105 5 L 78 22 Z" fill="#11151F" stroke="#212B3E" stroke-width="2"/>
+                            
+                            <!-- Secondary Lower Ear Fins -->
+                            <path d="M 25 45 L 5 32 L 28 40 Z" fill="#11151F" stroke="#212B3E" stroke-width="1.5"/>
+                            <path d="M 95 45 L 115 32 L 92 40 Z" fill="#11151F" stroke="#212B3E" stroke-width="1.5"/>
+
+                            <!-- Main Obsidian Head Structure -->
+                            <path d="M 60 12 C 82 12, 102 28, 96 58 C 92 78, 78 106, 60 106 C 42 106, 28 78, 24 58 C 18 28, 38 12, 60 12 Z" fill="#11151F" stroke="#212B3E" stroke-width="3"/>
+                            
+                            <!-- Scale Texture Accents on Crown -->
+                            <path d="M 52 24 L 60 18 L 68 24 M 48 32 L 60 26 L 72 32" stroke="#212B3E" stroke-width="2" stroke-linecap="round"/>
+
+                            <!-- LEFT EYE (ALMOND CAT-EYE WITH GLOWING EMERALD/PLASMA PUPIL) -->
+                            <g class="toothless-eye-glow" style="--glow-color: #10B981">
+                                <path d="M 32 54 C 42 46, 52 56, 46 68 C 38 72, 28 64, 32 54 Z" fill="#07090D" stroke="#212B3E" stroke-width="2"/>
+                                <ellipse id="hero-eye-left" class="eye-pupil" cx="40" cy="60" rx="4.5" ry="9" fill="#10B981"/>
+                                <!-- Eye Specular Highlight Reflection -->
+                                <circle cx="38" cy="56" r="1.5" fill="#FFFFFF" opacity="0.8"/>
+                            </g>
+
+                            <!-- RIGHT EYE -->
+                            <g class="toothless-eye-glow" style="--glow-color: #10B981">
+                                <path d="M 88 54 C 78 46, 68 56, 74 68 C 82 72, 92 64, 88 54 Z" fill="#07090D" stroke="#212B3E" stroke-width="2"/>
+                                <ellipse id="hero-eye-right" class="eye-pupil" cx="80" cy="60" rx="4.5" ry="9" fill="#10B981"/>
+                                <circle cx="78" cy="56" r="1.5" fill="#FFFFFF" opacity="0.8"/>
+                            </g>
+
+                            <!-- Nostril Cuts -->
+                            <ellipse cx="54" cy="84" rx="1.5" ry="3" fill="#212B3E"/>
+                            <ellipse cx="66" cy="84" rx="1.5" ry="3" fill="#212B3E"/>
+                        </svg>
+                    </button>
+
+                    <!-- NET BALANCE & SAFE TO SPEND -->
+                    <div class="text-right flex-1 min-w-0">
+                        <span class="text-xs font-mono font-bold text-slate-400 block uppercase tracking-wider">Remaining Balance</span>
+                        <div id="hero-net-balance" class="text-3xl font-black text-white font-mono tracking-tight privacy-target truncate">
+                            RM 0.00
+                        </div>
+                        <div class="mt-2 inline-block px-2.5 py-1 rounded-xl bg-obsidian border border-borderdark">
+                            <span class="text-[10px] font-mono text-slate-400 block">Safe-to-Spend / Day</span>
+                            <span id="hero-daily-safe" class="text-xs font-extrabold text-emeraldglow font-mono privacy-target">RM 0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PLASMA RESERVE PROGRESS BAR -->
+                <div class="space-y-1.5 pt-1">
+                    <div class="flex justify-between text-xs font-mono font-bold">
+                        <span class="text-slate-400 flex items-center gap-1.5">
+                            <i class="fa-solid fa-bolt text-emeraldglow" id="plasma-icon"></i> Plasma Budget Energy
+                        </span>
+                        <span id="hero-budget-pct" class="text-emeraldglow">0% Used</span>
+                    </div>
+                    <div class="w-full bg-obsidian rounded-full h-3.5 p-0.5 border border-borderdark overflow-hidden">
                         <div id="hero-plasma-bar" class="h-full rounded-full bg-emeraldglow glow-emerald transition-all duration-500" style="width: 0%"></div>
                     </div>
                 </div>
 
-                <!-- Income vs Expense Grid -->
-                <div class="grid grid-cols-2 gap-3 mt-4 pt-3 border-t border-borderdark/60">
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-8 h-8 rounded-xl bg-emeraldglow/10 border border-emeraldglow/30 flex items-center justify-center text-emeraldglow text-xs">
-                            <i class="fa-solid fa-arrow-down text-emeraldlight"></i>
+                <!-- INCOME VS EXPENSE STATS -->
+                <div class="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-borderdark/70">
+                    <div class="flex items-center gap-3 bg-obsidian/40 p-2.5 rounded-xl border border-borderdark/60">
+                        <div class="w-9 h-9 rounded-xl bg-emeraldglow/10 border border-emeraldglow/30 flex items-center justify-center text-emeraldglow text-xs flex-shrink-0">
+                            <i class="fa-solid fa-arrow-down text-emeraldglow"></i>
                         </div>
-                        <div>
+                        <div class="min-w-0">
                             <span class="text-[9px] font-mono font-bold uppercase text-slate-400 block">Total Income</span>
-                            <span class="text-xs font-extrabold text-white font-mono privacy-target" id="hero-income">RM 0.00</span>
+                            <span class="text-xs font-extrabold text-white font-mono privacy-target truncate block" id="hero-income">RM 0.00</span>
                         </div>
                     </div>
 
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-8 h-8 rounded-xl bg-tailfincrimson/10 border border-tailfincrimson/30 flex items-center justify-center text-tailfincrimson text-xs">
+                    <div class="flex items-center gap-3 bg-obsidian/40 p-2.5 rounded-xl border border-borderdark/60">
+                        <div class="w-9 h-9 rounded-xl bg-tailfincrimson/10 border border-tailfincrimson/30 flex items-center justify-center text-tailfincrimson text-xs flex-shrink-0">
                             <i class="fa-solid fa-arrow-up text-tailfincrimson"></i>
                         </div>
-                        <div>
-                            <span class="text-[9px] font-mono font-bold uppercase text-slate-400 block">Total Expenses</span>
-                            <span class="text-xs font-extrabold text-white font-mono privacy-target" id="hero-expenses">RM 0.00</span>
+                        <div class="min-w-0">
+                            <span class="text-[9px] font-mono font-bold uppercase text-slate-400 block">Total Expense</span>
+                            <span class="text-xs font-extrabold text-white font-mono privacy-target truncate block" id="hero-expenses">RM 0.00</span>
                         </div>
                     </div>
                 </div>
+
             </div>
 
-            <!-- FLIGHT STABILITY & TAIL-FIN ASYMMETRIC STAT CARD -->
+            <!-- TOOTHLESS PROSTHETIC RED TAIL-FIN SAVINGS CARD -->
             <div class="bg-cardbg p-4 rounded-2xl border border-borderdark flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <!-- Twin Tail-Fin SVG (Left Obsidian, Right Crimson Prosthetic) -->
-                    <div class="w-10 h-10 rounded-xl bg-charcoal border border-borderdark flex items-center justify-center">
+                    <!-- Twin Tail-Fin SVG Accent -->
+                    <div class="w-10 h-10 rounded-xl bg-charcoal border border-borderdark flex items-center justify-center flex-shrink-0">
                         <svg class="w-7 h-7" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <!-- Left Tail Fin (Natural Obsidian) -->
-                            <path d="M 27,45 L 8,12 L 27,28 Z" fill="#11151C" stroke="#1E2633" stroke-width="2"/>
-                            <!-- Right Tail Fin (Toothless Prosthetic Red Fin) -->
+                            <path d="M 27,45 L 8,12 L 27,28 Z" fill="#11151F" stroke="#212B3E" stroke-width="2"/>
+                            <!-- Right Tail Fin (Prosthetic Crimson Red) -->
                             <path d="M 33,45 L 52,12 L 33,28 Z" fill="#E11D48" stroke="#F43F5E" stroke-width="1.5"/>
                             <path d="M 40,24 L 46,30 M 43,18 L 47,22" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round"/>
-                            <!-- Center Tail Core -->
                             <circle cx="30" cy="38" r="3" fill="#10B981"/>
                         </svg>
                     </div>
@@ -251,123 +294,171 @@
                 </div>
 
                 <div class="text-right">
-                    <span class="text-[10px] font-mono uppercase font-bold text-slate-400 block">Monthly Target</span>
+                    <span class="text-[10px] font-mono uppercase font-bold text-slate-400 block">Target Budget Limit</span>
                     <span id="overview-target-limit" class="text-xs font-bold text-slate-300 font-mono privacy-target">RM 0.00</span>
                 </div>
             </div>
 
-            <!-- TOP SPENDING CATEGORIES SNAPSHOT -->
-            <div class="bg-cardbg p-4 rounded-2xl border border-borderdark space-y-3">
-                <div class="flex items-center justify-between">
-                    <h2 class="font-bold text-xs uppercase tracking-wider text-slate-300 flex items-center gap-2">
-                        <i class="fa-solid fa-layer-group text-plasmaglow"></i> Top Expenses
-                    </h2>
-                    <button onclick="switchTab('tab-budgets')" class="text-[11px] font-bold text-plasmaglow hover:underline">
-                        All Budgets &rarr;
-                    </button>
-                </div>
-                <div id="overview-top-categories" class="space-y-2">
-                    <!-- Injected by JS -->
-                </div>
-            </div>
-
-            <!-- RECENT TRANSACTIONS -->
+            <!-- RECENT TRANSACTIONS PREVIEW -->
             <div class="space-y-3">
                 <div class="flex items-center justify-between">
                     <h2 class="font-bold text-xs uppercase tracking-wider text-slate-300 flex items-center gap-2">
-                        <i class="fa-solid fa-[#10B981] fa-clock-rotate-left text-emeraldglow"></i> Recent Activity
+                        <i class="fa-solid fa-clock-rotate-left text-emeraldglow"></i> Recent Transactions
                     </h2>
-                    <button onclick="switchTab('tab-transactions')" class="text-[11px] font-bold text-slate-400 hover:text-white">
-                        View Log &rarr;
+                    <button type="button" onclick="switchTab('tab-log')" class="text-[11px] font-bold text-emeraldglow hover:underline">
+                        View Full Log &rarr;
                     </button>
                 </div>
 
-                <div id="overview-recent-list" class="space-y-2">
-                    <!-- Injected by JS -->
+                <div id="dashboard-recent-list" class="space-y-2">
+                    <!-- JS Injected -->
                 </div>
             </div>
         </section>
 
-        <!-- VIEW 2: TRANSACTIONS TAB -->
-        <section id="view-transactions" class="space-y-4 hidden">
+        <!-- ================= TAB 2: TRANSACTION LOG ================= -->
+        <section id="view-log" class="space-y-4 hidden">
             <div class="flex items-center justify-between">
-                <h2 class="font-bold text-sm text-white">Transaction Log</h2>
-                <span id="tx-total-count" class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-charcoal text-slate-400 border border-borderdark">0 Entries</span>
+                <h2 class="font-bold text-sm text-white flex items-center gap-2">
+                    <i class="fa-solid fa-list-check text-emeraldglow"></i> Transaction History
+                </h2>
+                <span id="log-total-count" class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-charcoal text-slate-400 border border-borderdark">0 Entries</span>
             </div>
 
             <!-- SEARCH & FILTERS -->
             <div class="space-y-2">
                 <div class="relative">
-                    <i class="fa-solid fa-magnifying-glass text-slate-500 text-xs absolute left-3.5 top-3"></i>
-                    <input type="text" id="tx-search-input" oninput="renderTransactionsList()" placeholder="Search description, category..." class="w-full pl-9 pr-3 py-2 bg-cardbg border border-borderdark rounded-xl text-xs text-slate-200 focus:outline-none focus:border-emeraldglow">
+                    <i class="fa-solid fa-search text-slate-500 text-xs absolute left-3.5 top-3.5"></i>
+                    <input type="text" id="log-search-input" oninput="renderTransactionsLog()" placeholder="Search item, merchant, category..." class="w-full pl-9 pr-3 py-2.5 bg-cardbg border border-borderdark rounded-xl text-xs text-slate-200 focus:outline-none focus:border-emeraldglow">
                 </div>
 
                 <div class="flex gap-2">
-                    <select id="tx-filter-type" onchange="renderTransactionsList()" class="w-1/2 px-3 py-2 bg-cardbg border border-borderdark rounded-xl text-xs text-slate-300 focus:outline-none focus:border-emeraldglow">
+                    <select id="log-filter-type" onchange="renderTransactionsLog()" class="w-1/2 px-3 py-2 bg-cardbg border border-borderdark rounded-xl text-xs text-slate-300 focus:outline-none focus:border-emeraldglow">
                         <option value="ALL">All Types</option>
                         <option value="EXPENSE">Expenses Only</option>
                         <option value="INCOME">Income Only</option>
                     </select>
 
-                    <select id="tx-filter-cat" onchange="renderTransactionsList()" class="w-1/2 px-3 py-2 bg-cardbg border border-borderdark rounded-xl text-xs text-slate-300 focus:outline-none focus:border-emeraldglow">
+                    <select id="log-filter-cat" onchange="renderTransactionsLog()" class="w-1/2 px-3 py-2 bg-cardbg border border-borderdark rounded-xl text-xs text-slate-300 focus:outline-none focus:border-emeraldglow">
                         <option value="ALL">All Categories</option>
                     </select>
                 </div>
             </div>
 
-            <!-- LIST CONTAINER -->
-            <div id="full-transactions-list" class="space-y-2">
-                <!-- Injected by JS -->
+            <!-- LOG LIST -->
+            <div id="full-log-list" class="space-y-2">
+                <!-- JS Injected -->
             </div>
         </section>
 
-        <!-- VIEW 3: BUDGETS & CATEGORIES TAB -->
+        <!-- ================= TAB 3: BUDGET CAPS ================= -->
         <section id="view-budgets" class="space-y-4 hidden">
             <div class="flex items-center justify-between">
-                <h2 class="font-bold text-sm text-white">Category Budget Limits</h2>
-                <button onclick="openAddCategoryModal()" class="px-2.5 py-1 bg-emeraldglow/10 text-emeraldglow hover:bg-emeraldglow hover:text-obsidian font-bold text-xs rounded-xl border border-emeraldglow/30 transition">
-                    + Custom Category
+                <h2 class="font-bold text-sm text-white flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-emeraldglow"></i> Category Budget Limits
+                </h2>
+                <button type="button" onclick="openAddCategoryModal()" class="px-3 py-1.5 bg-emeraldglow/10 text-emeraldglow hover:bg-emeraldglow hover:text-obsidian font-bold text-xs rounded-xl border border-emeraldglow/30 transition">
+                    + Custom Cap
                 </button>
             </div>
 
             <div id="budgets-category-list" class="space-y-3">
-                <!-- Injected by JS -->
+                <!-- JS Injected -->
             </div>
         </section>
 
-        <!-- VIEW 4: ANALYTICS TAB -->
+        <!-- ================= TAB 4: ANALYTICS ================= -->
         <section id="view-analytics" class="space-y-5 hidden">
-            <h2 class="font-bold text-sm text-white">Flight Intelligence & Analytics</h2>
+            <h2 class="font-bold text-sm text-white flex items-center gap-2">
+                <i class="fa-solid fa-chart-pie text-emeraldglow"></i> Flight Analytics & Trends
+            </h2>
 
-            <!-- Smart Spending Insights Card -->
+            <!-- SMART INSIGHTS -->
             <div class="bg-cardbg p-4 rounded-2xl border border-borderdark space-y-3">
-                <h3 class="text-xs font-mono font-bold uppercase text-slate-400">Smart Insights</h3>
+                <h3 class="text-xs font-mono font-bold uppercase text-slate-400">Smart Flight Metrics</h3>
                 <div class="grid grid-cols-2 gap-3">
                     <div class="bg-obsidian p-3 rounded-xl border border-borderdark">
-                        <span class="text-[9px] font-mono text-slate-400 block uppercase">Highest Category</span>
+                        <span class="text-[9px] font-mono text-slate-400 block uppercase">Top Spending Sector</span>
                         <span id="insight-top-cat" class="text-xs font-bold text-emeraldglow mt-0.5 block truncate">None</span>
                     </div>
                     <div class="bg-obsidian p-3 rounded-xl border border-borderdark">
-                        <span class="text-[9px] font-mono text-slate-400 block uppercase">Projected Spend</span>
-                        <span id="insight-projected" class="text-xs font-bold text-plasimacyan font-mono mt-0.5 block privacy-target">RM 0.00</span>
+                        <span class="text-[9px] font-mono text-slate-400 block uppercase">Projected Month Spend</span>
+                        <span id="insight-projected" class="text-xs font-bold text-plasmaglow font-mono mt-0.5 block privacy-target">RM 0.00</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Expense Category Doughnut Chart -->
+            <!-- DOUGHNUT CHART -->
             <div class="bg-cardbg p-4 rounded-2xl border border-borderdark space-y-3">
-                <h3 class="text-xs font-mono font-bold uppercase text-slate-300">Category Breakdown</h3>
+                <h3 class="text-xs font-mono font-bold uppercase text-slate-300">Category Share</h3>
                 <div class="relative w-full h-56 flex items-center justify-center">
                     <canvas id="chart-doughnut"></canvas>
                 </div>
             </div>
 
-            <!-- 6-Month Income vs Expense Bar Chart -->
+            <!-- HISTORICAL BAR CHART -->
             <div class="bg-cardbg p-4 rounded-2xl border border-borderdark space-y-3">
-                <h3 class="text-xs font-mono font-bold uppercase text-slate-300">6-Month Trend</h3>
+                <h3 class="text-xs font-mono font-bold uppercase text-slate-300">6-Month Income vs Expense</h3>
                 <div class="relative w-full h-56">
                     <canvas id="chart-bar-history"></canvas>
                 </div>
+            </div>
+        </section>
+
+        <!-- ================= TAB 5: VAULT / SETTINGS ================= -->
+        <section id="view-settings" class="space-y-5 hidden">
+            <h2 class="font-bold text-sm text-white flex items-center gap-2">
+                <i class="fa-solid fa-vault text-emeraldglow"></i> Vault & Configuration
+            </h2>
+
+            <div class="bg-cardbg p-5 rounded-2xl border border-borderdark space-y-4">
+                
+                <!-- Currency Setting -->
+                <div class="space-y-1.5">
+                    <label class="block text-[10px] font-mono font-bold uppercase text-slate-400">Primary Currency</label>
+                    <select id="setting-currency-select" onchange="updateCurrencySymbol(this.value)" class="w-full px-3 py-2.5 bg-obsidian border border-borderdark rounded-xl text-xs font-bold text-white focus:outline-none focus:border-emeraldglow">
+                        <option value="RM">RM - Malaysian Ringgit</option>
+                        <option value="$">$ - US Dollar</option>
+                        <option value="S$">S$ - Singapore Dollar</option>
+                        <option value="€">€ - Euro</option>
+                        <option value="£">£ - British Pound</option>
+                        <option value="¥">¥ - Japanese Yen</option>
+                    </select>
+                </div>
+
+                <!-- Export / Import Sync Section -->
+                <div class="space-y-2 pt-3 border-t border-borderdark">
+                    <label class="block text-[10px] font-mono font-bold uppercase text-slate-400">iCloud / Cross-Device Backup</label>
+                    
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" onclick="exportJSONBackup()" class="py-2.5 px-3 bg-obsidian hover:bg-charcoal border border-borderdark text-slate-200 font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition">
+                            <i class="fa-solid fa-file-export text-emeraldglow"></i> Export Backup
+                        </button>
+
+                        <label class="py-2.5 px-3 bg-obsidian hover:bg-charcoal border border-borderdark text-slate-200 font-bold text-xs rounded-xl flex items-center justify-center gap-2 cursor-pointer transition">
+                            <i class="fa-solid fa-file-import text-plasmaglow"></i> Import Backup
+                            <input type="file" id="json-import-file" onchange="importJSONBackup(event)" accept=".json" class="hidden">
+                        </label>
+                    </div>
+
+                    <button type="button" onclick="exportToCSV()" class="w-full py-2.5 px-3 bg-obsidian hover:bg-charcoal border border-borderdark text-slate-300 font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition">
+                        <i class="fa-solid fa-file-csv text-goldaccent"></i> Export Current Month to CSV
+                    </button>
+                </div>
+
+                <!-- Data Reset & Presets -->
+                <div class="space-y-2 pt-3 border-t border-borderdark">
+                    <label class="block text-[10px] font-mono font-bold uppercase text-slate-400">Presets & Reset</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" onclick="restoreSampleData()" class="py-2 px-3 bg-plasmaglow/10 text-plasmaglow border border-plasmaglow/30 hover:bg-plasmaglow hover:text-white font-bold text-xs rounded-xl transition">
+                            Load Sample Data
+                        </button>
+                        <button type="button" onclick="resetAllData()" class="py-2 px-3 bg-tailfincrimson/10 text-tailfincrimson border border-tailfincrimson/30 hover:bg-tailfincrimson hover:text-white font-bold text-xs rounded-xl transition">
+                            Clear All Data
+                        </button>
+                    </div>
+                </div>
+
             </div>
         </section>
 
@@ -377,196 +468,130 @@
     <nav class="fixed bottom-0 left-0 right-0 z-40 bg-obsidian/95 backdrop-blur-2xl border-t border-borderdark/80 px-4 py-2 pb-safe">
         <div class="max-w-md mx-auto flex items-center justify-around relative">
             
-            <button onclick="switchTab('tab-overview')" id="nav-btn-tab-overview" class="flex flex-col items-center gap-1 text-emeraldglow py-1 px-3">
+            <button type="button" onclick="switchTab('tab-dashboard')" id="nav-btn-tab-dashboard" class="flex flex-col items-center gap-1 text-emeraldglow py-1 px-3">
                 <i class="fa-solid fa-shield-halved text-base"></i>
                 <span class="text-[9px] font-mono font-bold uppercase tracking-tight">Overview</span>
             </button>
 
-            <button onclick="switchTab('tab-transactions')" id="nav-btn-tab-transactions" class="flex flex-col items-center gap-1 text-slate-500 hover:text-slate-200 py-1 px-3">
+            <button type="button" onclick="switchTab('tab-log')" id="nav-btn-tab-log" class="flex flex-col items-center gap-1 text-slate-500 hover:text-slate-200 py-1 px-3">
                 <i class="fa-solid fa-list-check text-base"></i>
                 <span class="text-[9px] font-mono font-bold uppercase tracking-tight">Log</span>
             </button>
 
-            <!-- Prominent Center Floating Plasma Add Button -->
-            <button onclick="openAddTransactionModal()" class="w-12 h-12 -mt-6 rounded-2xl bg-emeraldglow glow-emerald text-obsidian flex items-center justify-center text-xl font-black shadow-xl transition active:scale-90">
-                <i class="fa-solid fa-plus"></i>
+            <!-- PROMINENT CENTER FLOATING '+' BUTTON (HIGH Z-INDEX TOUCH TARGET) -->
+            <button type="button" id="floating-add-btn" onclick="openAddTransactionModal(event)" class="w-14 h-14 -mt-7 rounded-2xl bg-emeraldglow text-obsidian flex items-center justify-center text-2xl font-black shadow-lg shadow-emeraldglow/40 border-2 border-obsidian z-50 transition-transform active:scale-90 cursor-pointer">
+                <i class="fa-solid fa-plus pointer-events-none"></i>
             </button>
 
-            <button onclick="switchTab('tab-budgets')" id="nav-btn-tab-budgets" class="flex flex-col items-center gap-1 text-slate-500 hover:text-slate-200 py-1 px-3">
+            <button type="button" onclick="switchTab('tab-budgets')" id="nav-btn-tab-budgets" class="flex flex-col items-center gap-1 text-slate-500 hover:text-slate-200 py-1 px-3">
                 <i class="fa-solid fa-sliders text-base"></i>
-                <span class="text-[9px] font-mono font-bold uppercase tracking-tight">Budgets</span>
+                <span class="text-[9px] font-mono font-bold uppercase tracking-tight">Caps</span>
             </button>
 
-            <button onclick="switchTab('tab-analytics')" id="nav-btn-tab-analytics" class="flex flex-col items-center gap-1 text-slate-500 hover:text-slate-200 py-1 px-3">
-                <i class="fa-solid fa-chart-line text-base"></i>
+            <button type="button" onclick="switchTab('tab-analytics')" id="nav-btn-tab-analytics" class="flex flex-col items-center gap-1 text-slate-500 hover:text-slate-200 py-1 px-3">
+                <i class="fa-solid fa-chart-pie text-base"></i>
                 <span class="text-[9px] font-mono font-bold uppercase tracking-tight">Analytics</span>
             </button>
 
         </div>
     </nav>
 
-    <!-- ADD / EDIT TRANSACTION BOTTOM SHEET MODAL -->
-    <div id="modal-transaction" class="fixed inset-0 z-50 flex items-end justify-center modal-overlay hidden-state">
-        <div onclick="closeTransactionModal()" class="absolute inset-0 bg-obsidian/80 backdrop-blur-sm"></div>
+    <!-- ADD / EDIT TRANSACTION MODAL BOTTOM SHEET -->
+    <div id="modal-transaction" class="fixed inset-0 z-[100] hidden flex items-end justify-center">
+        <!-- Backdrop -->
+        <div onclick="closeTransactionModal()" class="absolute inset-0 bg-obsidian/80 backdrop-blur-md"></div>
 
-        <div class="relative w-full max-w-md bg-charcoal border-t border-borderdark rounded-t-3xl p-5 shadow-2xl modal-sheet hidden-state space-y-4">
+        <!-- Sheet Content -->
+        <div class="relative w-full max-w-md bg-charcoal border-t border-borderdark rounded-t-3xl p-6 shadow-2xl z-10 space-y-4 max-h-[90vh] overflow-y-auto">
             
-            <div class="w-10 h-1 bg-borderdark rounded-full mx-auto -mt-1"></div>
+            <div class="w-12 h-1 bg-borderdark rounded-full mx-auto -mt-2 mb-2"></div>
 
             <div class="flex items-center justify-between">
-                <h3 class="font-bold text-white text-sm" id="tx-modal-title">New Entry</h3>
-                <button onclick="closeTransactionModal()" class="w-7 h-7 rounded-full bg-obsidian text-slate-400 hover:text-white flex items-center justify-center">
-                    <i class="fa-solid fa-xmark text-xs"></i>
+                <h3 class="font-bold text-white text-base font-mono flex items-center gap-2" id="tx-modal-title">
+                    <i class="fa-solid fa-plus-circle text-emeraldglow"></i> Log New Entry
+                </h3>
+                <button type="button" onclick="closeTransactionModal()" class="w-8 h-8 rounded-full bg-obsidian text-slate-400 hover:text-white flex items-center justify-center border border-borderdark">
+                    <i class="fa-solid fa-times text-xs"></i>
                 </button>
             </div>
 
             <!-- Expense / Income Toggle -->
             <div class="grid grid-cols-2 p-1 bg-obsidian border border-borderdark rounded-xl text-xs font-bold">
-                <button type="button" id="btn-tx-type-expense" onclick="setTxModalType('EXPENSE')" class="py-2 rounded-lg bg-tailfincrimson/30 text-tailfincrimson border border-tailfincrimson/40">Expense</button>
-                <button type="button" id="btn-tx-type-income" onclick="setTxModalType('INCOME')" class="py-2 rounded-lg text-slate-400">Income</button>
+                <button type="button" id="btn-tx-type-expense" onclick="setTxModalType('EXPENSE')" class="py-2.5 rounded-lg bg-tailfincrimson/30 text-tailfincrimson border border-tailfincrimson/40">Expense</button>
+                <button type="button" id="btn-tx-type-income" onclick="setTxModalType('INCOME')" class="py-2.5 rounded-lg text-slate-400">Income</button>
             </div>
 
-            <form onsubmit="handleSaveTransaction(event)" class="space-y-3">
+            <form onsubmit="handleSaveTransaction(event)" class="space-y-3.5">
                 <input type="hidden" id="form-tx-id" value="">
                 <input type="hidden" id="form-tx-type" value="EXPENSE">
 
                 <div>
-                    <label class="block text-[10px] font-mono font-bold uppercase text-slate-400 mb-1">Description</label>
-                    <input type="text" id="form-tx-desc" required placeholder="e.g. Jaya Grocer, PETRONAS Fuel, Salary" class="w-full px-3.5 py-2.5 bg-obsidian border border-borderdark rounded-xl text-xs font-semibold text-white focus:outline-none focus:border-emeraldglow">
+                    <label class="block text-[10px] font-mono font-bold uppercase text-slate-400 mb-1">Description / Merchant</label>
+                    <input type="text" id="form-tx-desc" required placeholder="e.g. Jaya Grocer, PETRONAS Fuel, Salary" class="w-full px-3.5 py-3 bg-obsidian border border-borderdark rounded-xl text-xs font-semibold text-white focus:outline-none focus:border-emeraldglow">
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-[10px] font-mono font-bold uppercase text-slate-400 mb-1">Amount (<span class="currency-symbol">RM</span>)</label>
-                        <input type="number" step="0.01" min="0.01" id="form-tx-amount" required placeholder="0.00" class="w-full px-3.5 py-2.5 bg-obsidian border border-borderdark rounded-xl text-xs font-bold text-white font-mono focus:outline-none focus:border-emeraldglow">
+                        <input type="number" step="0.01" min="0.01" id="form-tx-amount" required placeholder="0.00" class="w-full px-3.5 py-3 bg-obsidian border border-borderdark rounded-xl text-xs font-bold text-white font-mono focus:outline-none focus:border-emeraldglow">
                     </div>
                     <div>
                         <label class="block text-[10px] font-mono font-bold uppercase text-slate-400 mb-1">Category</label>
-                        <select id="form-tx-category" class="w-full px-3.5 py-2.5 bg-obsidian border border-borderdark rounded-xl text-xs font-semibold text-white focus:outline-none focus:border-emeraldglow">
-                            <!-- Injected -->
+                        <select id="form-tx-category" class="w-full px-3.5 py-3 bg-obsidian border border-borderdark rounded-xl text-xs font-semibold text-white focus:outline-none focus:border-emeraldglow">
+                            <!-- JS Injected -->
                         </select>
                     </div>
                 </div>
 
                 <div>
                     <label class="block text-[10px] font-mono font-bold uppercase text-slate-400 mb-1">Date</label>
-                    <input type="date" id="form-tx-date" required class="w-full px-3.5 py-2.5 bg-obsidian border border-borderdark rounded-xl text-xs font-semibold text-white focus:outline-none focus:border-emeraldglow">
+                    <input type="date" id="form-tx-date" required class="w-full px-3.5 py-3 bg-obsidian border border-borderdark rounded-xl text-xs font-semibold text-white focus:outline-none focus:border-emeraldglow">
                 </div>
 
-                <button type="submit" class="w-full py-3 bg-emeraldglow hover:bg-emeraldlight text-obsidian font-extrabold uppercase tracking-wider text-xs rounded-xl shadow-lg transition active:scale-[0.98] mt-2">
-                    Save Transaction
+                <button type="submit" id="btn-tx-submit" class="w-full py-3.5 bg-emeraldglow hover:bg-emeraldglow/90 text-obsidian font-extrabold uppercase tracking-wider text-xs rounded-xl shadow-lg transition active:scale-[0.98] mt-3">
+                    Save Entry
                 </button>
             </form>
-        </div>
-    </div>
-
-    <!-- SETTINGS & DATA BACKUP MODAL -->
-    <div id="modal-settings" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center modal-overlay hidden-state">
-        <div onclick="closeSettingsModal()" class="absolute inset-0 bg-obsidian/80 backdrop-blur-sm"></div>
-
-        <div class="relative w-full max-w-md bg-charcoal border-t sm:border border-borderdark rounded-t-3xl sm:rounded-2xl p-5 shadow-2xl modal-sheet hidden-state space-y-4">
-            
-            <div class="flex items-center justify-between border-b border-borderdark/80 pb-3">
-                <h3 class="font-bold text-white text-sm flex items-center gap-2">
-                    <i class="fa-solid fa-sliders text-emeraldglow"></i> App Settings & Data
-                </h3>
-                <button onclick="closeSettingsModal()" class="w-7 h-7 rounded-full bg-obsidian text-slate-400 hover:text-white flex items-center justify-center">
-                    <i class="fa-solid fa-xmark text-xs"></i>
-                </button>
-            </div>
-
-            <!-- Currency Selection -->
-            <div class="space-y-1.5">
-                <label class="block text-[10px] font-mono font-bold uppercase text-slate-400">Primary Currency</label>
-                <select id="setting-currency-select" onchange="updateCurrencySymbol(this.value)" class="w-full px-3 py-2 bg-obsidian border border-borderdark rounded-xl text-xs font-bold text-white focus:outline-none focus:border-emeraldglow">
-                    <option value="RM">RM - Malaysian Ringgit</option>
-                    <option value="$">$ - US Dollar</option>
-                    <option value="S$">S$ - Singapore Dollar</option>
-                    <option value="€">€ - Euro</option>
-                    <option value="£">£ - British Pound</option>
-                    <option value="¥">¥ - Japanese Yen</option>
-                    <option value="₹">₹ - Indian Rupee</option>
-                </select>
-            </div>
-
-            <!-- Export / Import Actions -->
-            <div class="space-y-2 pt-2 border-t border-borderdark">
-                <label class="block text-[10px] font-mono font-bold uppercase text-slate-400">Data Backup & Export</label>
-                
-                <div class="grid grid-cols-2 gap-2">
-                    <button onclick="exportToCSV()" class="py-2.5 px-3 bg-obsidian hover:bg-cardbg border border-borderdark text-slate-200 font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition">
-                        <i class="fa-solid fa-file-csv text-emeraldglow"></i> Export CSV
-                    </button>
-
-                    <button onclick="exportJSONBackup()" class="py-2.5 px-3 bg-obsidian hover:bg-cardbg border border-borderdark text-slate-200 font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition">
-                        <i class="fa-solid fa-file-code text-plasmaglow"></i> JSON Backup
-                    </button>
-                </div>
-
-                <label class="py-2.5 px-3 bg-obsidian hover:bg-cardbg border border-borderdark text-slate-200 font-bold text-xs rounded-xl flex items-center justify-center gap-2 cursor-pointer transition">
-                    <i class="fa-solid fa-upload text-plasimacyan"></i> Import JSON Backup
-                    <input type="file" id="json-import-file" onchange="importJSONBackup(event)" accept=".json" class="hidden">
-                </label>
-            </div>
-
-            <!-- Reset Data Actions -->
-            <div class="space-y-2 pt-2 border-t border-borderdark">
-                <label class="block text-[10px] font-mono font-bold uppercase text-slate-400">Reset & Presets</label>
-                <div class="grid grid-cols-2 gap-2">
-                    <button onclick="restoreSampleData()" class="py-2 px-3 bg-plasmaglow/10 text-plasmaglow border border-plasmaglow/30 hover:bg-plasmaglow hover:text-white font-bold text-xs rounded-xl transition">
-                        Load Sample Data
-                    </button>
-                    <button onclick="resetAllData()" class="py-2 px-3 bg-tailfincrimson/10 text-tailfincrimson border border-tailfincrimson/30 hover:bg-tailfincrimson hover:text-white font-bold text-xs rounded-xl transition">
-                        Reset All Data
-                    </button>
-                </div>
-            </div>
         </div>
     </div>
 
     <!-- ADD CUSTOM CATEGORY MODAL -->
-    <div id="modal-custom-cat" class="fixed inset-0 z-50 flex items-center justify-center modal-overlay hidden-state">
-        <div onclick="closeAddCategoryModal()" class="absolute inset-0 bg-obsidian/80 backdrop-blur-sm"></div>
-
-        <div class="relative w-full max-w-xs bg-charcoal border border-borderdark rounded-2xl p-5 shadow-2xl modal-sheet hidden-state space-y-4">
-            <h3 class="font-bold text-white text-sm">Add Custom Category</h3>
+    <div id="modal-custom-cat" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
+        <div onclick="closeAddCategoryModal()" class="absolute inset-0 bg-obsidian/80 backdrop-blur-md"></div>
+        <div class="relative w-full max-w-xs bg-charcoal border border-borderdark rounded-2xl p-5 shadow-2xl z-10 space-y-4">
+            <h3 class="font-bold text-white text-sm">Add Custom Category Cap</h3>
             <form onsubmit="handleSaveCustomCategory(event)" class="space-y-3">
                 <div>
                     <label class="block text-[10px] font-mono font-bold uppercase text-slate-400 mb-1">Category Name</label>
-                    <input type="text" id="custom-cat-name" required placeholder="e.g. Subscriptions, Pet Care" class="w-full px-3 py-2 bg-obsidian border border-borderdark rounded-xl text-xs font-semibold text-white focus:outline-none focus:border-emeraldglow">
+                    <input type="text" id="custom-cat-name" required placeholder="e.g. Subscriptions, Gaming" class="w-full px-3 py-2 bg-obsidian border border-borderdark rounded-xl text-xs text-white focus:outline-none focus:border-emeraldglow">
                 </div>
-
                 <div>
-                    <label class="block text-[10px] font-mono font-bold uppercase text-slate-400 mb-1">Monthly RM Cap</label>
-                    <input type="number" id="custom-cat-limit" required min="10" placeholder="500" class="w-full px-3 py-2 bg-obsidian border border-borderdark rounded-xl text-xs font-bold text-white font-mono focus:outline-none focus:border-emeraldglow">
+                    <label class="block text-[10px] font-mono font-bold uppercase text-slate-400 mb-1">Monthly Cap (<span class="currency-symbol">RM</span>)</label>
+                    <input type="number" id="custom-cat-limit" required min="10" placeholder="500" class="w-full px-3 py-2 bg-obsidian border border-borderdark rounded-xl text-xs font-mono text-white focus:outline-none focus:border-emeraldglow">
                 </div>
-
-                <button type="submit" class="w-full py-2.5 bg-emeraldglow hover:bg-emeraldlight text-obsidian font-extrabold uppercase tracking-wider text-xs rounded-xl shadow-lg transition">
-                    Create Category
+                <button type="submit" class="w-full py-2.5 bg-emeraldglow text-obsidian font-extrabold uppercase text-xs rounded-xl">
+                    Create Cap
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- TOAST NOTIFICATIONS -->
-    <div id="toast-container" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 w-full max-w-xs pointer-events-none px-4"></div>
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast-container" class="fixed top-16 left-1/2 -translate-x-1/2 z-[110] w-full max-w-xs pointer-events-none px-4"></div>
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        /**
-         * DEFAULT CATEGORIES
-         */
-        let DEFAULT_CATEGORIES = [
+        const DEFAULT_CATEGORIES = [
             { id: "Food & Dining", label: "Food & Dining", icon: "fa-utensils", color: "#F59E0B", defaultLimit: 1200 },
             { id: "Fuel & Transport", label: "Fuel & Transport", icon: "fa-car", color: "#38BDF8", defaultLimit: 400 },
             { id: "Bills & Utilities", label: "Bills & Utilities", icon: "fa-bolt", color: "#10B981", defaultLimit: 800 },
             { id: "Shopping", label: "Shopping", icon: "fa-bag-shopping", color: "#EC4899", defaultLimit: 600 },
-            { id: "Entertainment", label: "Entertainment", icon: "fa-gamepad", color: "#8B5CF6", defaultLimit: 300 },
+            { id: "Entertainment", label: "Entertainment", icon: "fa-gamepad", color: "#A855F7", defaultLimit: 300 },
             { id: "Savings & Investments", label: "Savings & Invest", icon: "fa-piggy-bank", color: "#34D399", defaultLimit: 1000 },
             { id: "Others", label: "Others", icon: "fa-ellipsis", color: "#64748B", defaultLimit: 300 }
         ];
 
-        const STORAGE_KEY = "nightfury_ledger_v2";
+        const STORAGE_KEY = "nightfury_ledger_v3";
 
         let state = {
             currency: "RM",
@@ -577,7 +602,6 @@
             months: {}
         };
 
-        // Chart instances
         let chartDoughnutInstance = null;
         let chartBarInstance = null;
 
@@ -586,63 +610,40 @@
             loadState();
             initializeUI();
             renderApp();
+
+            // Auto eye blink timer every 6 seconds
+            setInterval(() => {
+                if (!state.privacyMode) {
+                    triggerEyeBlink();
+                }
+            }, 6500);
         };
 
-        /**
-         * DYNAMIC iOS TOUCH ICON GENERATOR (Canvas to DataURL)
-         */
         function generateAppIcon() {
             const canvas = document.createElement('canvas');
-            canvas.width = 180;
-            canvas.height = 180;
+            canvas.width = 180; canvas.height = 180;
             const ctx = canvas.getContext('2d');
 
-            // Obsidian Base
-            ctx.fillStyle = '#07090C';
-            ctx.beginPath();
-            ctx.roundRect(0, 0, 180, 180, 42);
-            ctx.fill();
+            ctx.fillStyle = '#07090D';
+            ctx.beginPath(); ctx.roundRect(0, 0, 180, 180, 40); ctx.fill();
+            ctx.strokeStyle = '#212B3E'; ctx.lineWidth = 4; ctx.stroke();
 
-            // Border
-            ctx.strokeStyle = '#1E2633';
-            ctx.lineWidth = 4;
-            ctx.stroke();
-
-            // Glowing Eyes
+            // Glowing Emerald Slit Eyes
             ctx.save();
-            ctx.shadowColor = '#10B981';
-            ctx.shadowBlur = 18;
+            ctx.shadowColor = '#10B981'; ctx.shadowBlur = 20;
             ctx.fillStyle = '#10B981';
 
-            // Left pupil
-            ctx.beginPath();
-            ctx.ellipse(65, 90, 12, 38, Math.PI / 14, 0, 2 * Math.PI);
-            ctx.fill();
+            ctx.beginPath(); ctx.ellipse(65, 90, 13, 38, Math.PI / 12, 0, 2 * Math.PI); ctx.fill();
+            ctx.beginPath(); ctx.ellipse(115, 90, 13, 38, -Math.PI / 12, 0, 2 * Math.PI); ctx.fill();
 
-            // Right pupil
-            ctx.beginPath();
-            ctx.ellipse(115, 90, 12, 38, -Math.PI / 14, 0, 2 * Math.PI);
-            ctx.fill();
-
-            // Slit centers
-            ctx.fillStyle = '#07090C';
-            ctx.shadowBlur = 0;
-            ctx.beginPath();
-            ctx.ellipse(65, 90, 3, 30, Math.PI / 14, 0, 2 * Math.PI);
-            ctx.fill();
-
-            ctx.beginPath();
-            ctx.ellipse(115, 90, 3, 30, -Math.PI / 14, 0, 2 * Math.PI);
-            ctx.fill();
-
+            ctx.fillStyle = '#07090D'; ctx.shadowBlur = 0;
+            ctx.beginPath(); ctx.ellipse(65, 90, 3, 30, Math.PI / 12, 0, 2 * Math.PI); ctx.fill();
+            ctx.beginPath(); ctx.ellipse(115, 90, 3, 30, -Math.PI / 12, 0, 2 * Math.PI); ctx.fill();
             ctx.restore();
 
             document.getElementById('apple-touch-icon').href = canvas.toDataURL('image/png');
         }
 
-        /**
-         * STATE MANAGEMENT
-         */
         function loadState() {
             const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) {
@@ -655,14 +656,12 @@
             if (!state.categoryBudgets) state.categoryBudgets = {};
             if (!state.customCategories) state.customCategories = [];
 
-            // Populate category default budgets if missing
             getAllCategories().forEach(c => {
                 if (state.categoryBudgets[c.id] === undefined) {
                     state.categoryBudgets[c.id] = c.defaultLimit || 500;
                 }
             });
 
-            // Ensure active month data exists or load realistic sample
             if (!state.months[state.activeMonth] || state.months[state.activeMonth].length === 0) {
                 loadSampleDataForMonth(state.activeMonth);
             }
@@ -679,35 +678,50 @@
         function loadSampleDataForMonth(mKey) {
             const [y, m] = mKey.split('-');
             state.months[mKey] = [
-                { id: 't1', date: `${y}-${m}-01`, desc: 'Executive Salary Inflow', amount: 6500, type: 'INCOME', category: 'Savings & Investments' },
-                { id: 't2', date: `${y}-${m}-02`, desc: 'Luxury Condo Rental & Maintenance', amount: 1400, type: 'EXPENSE', category: 'Bills & Utilities' },
-                { id: 't3', date: `${y}-${m}-05`, desc: 'Jaya Grocer Imported Supplies', amount: 380, type: 'EXPENSE', category: 'Food & Dining' },
-                { id: 't4', date: `${y}-${m}-08`, desc: 'PETRONAS Primax 97 Fuel', amount: 160, type: 'EXPENSE', category: 'Fuel & Transport' },
-                { id: 't5', date: `${y}-${m}-12`, desc: 'High-Speed Fibre & Mobile Bill', amount: 149, type: 'EXPENSE', category: 'Bills & Utilities' },
-                { id: 't6', date: `${y}-${m}-15`, desc: 'Uniqlo Apparel Purchase', amount: 260, type: 'EXPENSE', category: 'Shopping' },
-                { id: 't7', date: `${y}-${m}-18`, desc: 'Omakase Steakhouse Dinner', amount: 320, type: 'EXPENSE', category: 'Food & Dining' },
-                { id: 't8', date: `${y}-${m}-22`, desc: 'Index Fund Deposit', amount: 1000, type: 'EXPENSE', category: 'Savings & Investments' }
+                { id: 't1', date: `${y}-${m}-01`, desc: 'Executive Salary Inflow', amount: 6800, type: 'INCOME', category: 'Savings & Investments' },
+                { id: 't2', date: `${y}-${m}-02`, desc: 'Luxury Condo Rental & Utility', amount: 1450, type: 'EXPENSE', category: 'Bills & Utilities' },
+                { id: 't3', date: `${y}-${m}-05`, desc: 'Jaya Grocer Premium Supplies', amount: 390, type: 'EXPENSE', category: 'Food & Dining' },
+                { id: 't4', date: `${y}-${m}-08`, desc: 'PETRONAS Primax 97 Fuel', amount: 170, type: 'EXPENSE', category: 'Fuel & Transport' },
+                { id: 't5', date: `${y}-${m}-12`, desc: 'Fibre Broadband & Mobile', amount: 149, type: 'EXPENSE', category: 'Bills & Utilities' },
+                { id: 't6', date: `${y}-${m}-15`, desc: 'Uniqlo Executive Wear', amount: 280, type: 'EXPENSE', category: 'Shopping' },
+                { id: 't7', date: `${y}-${m}-18`, desc: 'Wagyu Omakase Dinner', amount: 350, type: 'EXPENSE', category: 'Food & Dining' },
+                { id: 't8', date: `${y}-${m}-22`, desc: 'Index Fund Investment', amount: 1000, type: 'EXPENSE', category: 'Savings & Investments' }
             ];
         }
 
-        /**
-         * PRIVACY TOGGLE (TOOTHLESS EYE BLINK)
-         */
+        function triggerEyeBlink() {
+            const svgHeader = document.getElementById('header-toothless-svg');
+            const svgHero = document.getElementById('hero-toothless-svg');
+            
+            if (svgHeader) svgHeader.classList.add('blinking');
+            if (svgHero) svgHero.classList.add('blinking');
+
+            setTimeout(() => {
+                if (!state.privacyMode) {
+                    if (svgHeader) svgHeader.classList.remove('blinking');
+                    if (svgHero) svgHero.classList.remove('blinking');
+                }
+            }, 300);
+        }
+
         function togglePrivacyMode() {
             state.privacyMode = !state.privacyMode;
             saveState();
 
-            const svg = document.getElementById('header-toothless-svg');
-            const lockBadge = document.getElementById('privacy-lock-badge');
+            const svgHeader = document.getElementById('header-toothless-svg');
+            const svgHero = document.getElementById('hero-toothless-svg');
+            const badge = document.getElementById('privacy-lock-badge');
 
             if (state.privacyMode) {
-                svg.classList.add('blinking');
-                lockBadge.innerHTML = `<i class="fa-solid fa-lock text-emeraldglow"></i>`;
-                showToast("Privacy mode enabled");
+                svgHeader.classList.add('blinking');
+                svgHero.classList.add('blinking');
+                badge.innerHTML = `<i class="fa-solid fa-lock text-tailfincrimson"></i>`;
+                showToast("Privacy mode active");
             } else {
-                svg.classList.remove('blinking');
-                lockBadge.innerHTML = `<i class="fa-solid fa-lock-open"></i>`;
-                showToast("Privacy mode disabled");
+                svgHeader.classList.remove('blinking');
+                svgHero.classList.remove('blinking');
+                badge.innerHTML = `<i class="fa-solid fa-eye text-emeraldglow"></i>`;
+                showToast("Privacy mode deactivated");
             }
 
             applyPrivacyMasking();
@@ -723,9 +737,6 @@
             });
         }
 
-        /**
-         * UI RENDERERS
-         */
         function initializeUI() {
             document.getElementById('month-picker-input').value = state.activeMonth;
             document.getElementById('setting-currency-select').value = state.currency;
@@ -736,7 +747,7 @@
         function populateCategoryDropdowns() {
             const categories = getAllCategories();
             const txCatSelect = document.getElementById('form-tx-category');
-            const filterCatSelect = document.getElementById('tx-filter-cat');
+            const filterCatSelect = document.getElementById('log-filter-cat');
 
             txCatSelect.innerHTML = categories.map(c => `<option value="${c.id}">${c.label}</option>`).join('');
             filterCatSelect.innerHTML = `<option value="ALL">All Categories</option>` + 
@@ -747,7 +758,7 @@
             updateHeaderMonthLabel();
             updateCurrencySymbols();
             renderHeroDashboard();
-            renderTransactionsList();
+            renderTransactionsLog();
             renderBudgetsTab();
             renderAnalyticsTab();
             applyPrivacyMasking();
@@ -777,22 +788,18 @@
         }
 
         /**
-         * HERO DASHBOARD & PLASMA CHARGE METER
+         * HERO DASHBOARD & DYNAMIC TOOTHLESS MOOD ENGINE
          */
         function renderHeroDashboard() {
             const txs = state.months[state.activeMonth] || [];
 
             let totalIncome = 0;
             let totalExpenses = 0;
-            const catSpent = {};
 
             txs.forEach(t => {
                 const amt = Number(t.amount) || 0;
                 if (t.type === 'INCOME') totalIncome += amt;
-                else {
-                    totalExpenses += amt;
-                    catSpent[t.category] = (catSpent[t.category] || 0) + amt;
-                }
+                else totalExpenses += amt;
             });
 
             const netBalance = totalIncome - totalExpenses;
@@ -800,13 +807,11 @@
             document.getElementById('hero-income').textContent = formatCurrency(totalIncome);
             document.getElementById('hero-expenses').textContent = formatCurrency(totalExpenses);
 
-            // Total Budget Cap Calculation
             let totalTargetCap = 0;
             getAllCategories().forEach(c => totalTargetCap += (state.categoryBudgets[c.id] || 0));
 
             document.getElementById('overview-target-limit').textContent = formatCurrency(totalTargetCap);
 
-            // Safe to spend daily calculation
             const [y, m] = state.activeMonth.split('-');
             const daysInMonth = new Date(parseInt(y), parseInt(m), 0).getDate();
             const todayDay = new Date().getDate();
@@ -816,7 +821,6 @@
 
             document.getElementById('hero-daily-safe').textContent = formatCurrency(dailySafe);
 
-            // Plasma Charge Meter Colors & Width
             const pct = totalTargetCap > 0 ? Math.min(100, Math.round((totalExpenses / totalTargetCap) * 100)) : 0;
             const bar = document.getElementById('hero-plasma-bar');
             const pctLabel = document.getElementById('hero-budget-pct');
@@ -824,10 +828,29 @@
             bar.style.width = `${pct}%`;
             pctLabel.textContent = `${pct}% Spent`;
 
+            // TOOTHLESS MOOD ENGINE & COLOR ACCENTS
+            const eyeLeft = document.getElementById('hero-eye-left');
+            const eyeRight = document.getElementById('hero-eye-right');
+            const miniPupilLeft = document.getElementById('mini-pupil-left');
+            const miniPupilRight = document.getElementById('mini-pupil-right');
+            const badgeText = document.getElementById('status-badge-text');
+            const statusBadge = document.getElementById('toothless-status-badge');
+            const brandAccent = document.getElementById('header-brand-accent');
+
+            let activeColor = "#10B981"; // Emerald
+            let badgeStyle = "bg-emeraldglow/10 text-emeraldglow border-emeraldglow/30";
+            let statusMessage = "Stable Flight";
+
             if (pct > 95) {
+                activeColor = "#E11D48"; // Crimson Red
+                badgeStyle = "bg-tailfincrimson/15 text-tailfincrimson border-tailfincrimson/40";
+                statusMessage = "Critical Overheat";
                 bar.className = "h-full rounded-full bg-tailfincrimson glow-crimson transition-all duration-500";
                 pctLabel.className = "text-tailfincrimson font-mono font-bold";
-            } else if (pct >= 70) {
+            } else if (pct >= 75) {
+                activeColor = "#A855F7"; // Plasma Violet
+                badgeStyle = "bg-plasmaglow/15 text-plasmaglow border-plasmaglow/40";
+                statusMessage = "Plasma Charge";
                 bar.className = "h-full rounded-full bg-plasmaglow glow-plasma transition-all duration-500";
                 pctLabel.className = "text-plasmaglow font-mono font-bold";
             } else {
@@ -835,50 +858,31 @@
                 pctLabel.className = "text-emeraldglow font-mono font-bold";
             }
 
-            // Savings Rate Flight Stability
+            // Apply Eye Glow Colors
+            if (eyeLeft) eyeLeft.setAttribute('fill', activeColor);
+            if (eyeRight) eyeRight.setAttribute('fill', activeColor);
+            if (miniPupilLeft) miniPupilLeft.setAttribute('fill', activeColor);
+            if (miniPupilRight) miniPupilRight.setAttribute('fill', activeColor);
+
+            statusBadge.className = `px-2.5 py-1 rounded-full text-[10px] font-mono font-black uppercase tracking-wider ${badgeStyle} flex items-center gap-1.5`;
+            badgeText.textContent = statusMessage;
+            brandAccent.style.color = activeColor;
+
             const savingsRate = totalIncome > 0 ? (((totalIncome - totalExpenses) / totalIncome) * 100).toFixed(1) : 0;
             document.getElementById('overview-savings-rate').textContent = `${savingsRate}% Saved`;
 
-            // Top 3 Categories Snapshot
-            const sortedCats = Object.keys(catSpent).sort((a, b) => catSpent[b] - catSpent[a]).slice(0, 3);
-            const topCatsContainer = document.getElementById('overview-top-categories');
-
-            if (sortedCats.length === 0) {
-                topCatsContainer.innerHTML = `<p class="text-xs text-slate-500 italic">No expenses logged yet this month.</p>`;
-            } else {
-                topCatsContainer.innerHTML = sortedCats.map(catId => {
-                    const catObj = getAllCategories().find(c => c.id === catId) || { label: catId, color: '#10B981' };
-                    const amt = catSpent[catId];
-                    const cap = state.categoryBudgets[catId] || 1;
-                    const catPct = Math.min(100, Math.round((amt / cap) * 100));
-
-                    return `
-                        <div class="space-y-1">
-                            <div class="flex justify-between text-xs">
-                                <span class="text-slate-300 font-semibold">${catObj.label}</span>
-                                <span class="font-mono text-white font-bold privacy-target">${formatCurrency(amt)}</span>
-                            </div>
-                            <div class="w-full bg-obsidian rounded-full h-1.5 overflow-hidden border border-borderdark">
-                                <div class="h-full rounded-full" style="width: ${catPct}%; background-color: ${catObj.color}"></div>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            }
-
-            // Overview Recent 3 Items
-            const recentContainer = document.getElementById('overview-recent-list');
-            recentContainer.innerHTML = buildTxListHtml(txs.slice(0, 3));
+            // Recent 3 Items
+            document.getElementById('dashboard-recent-list').innerHTML = buildTxListHtml(txs.slice(0, 3));
         }
 
         /**
-         * TRANSACTIONS LOG & SEARCH
+         * TRANSACTIONS LOG & FILTERS
          */
-        function renderTransactionsList() {
+        function renderTransactionsLog() {
             const txs = state.months[state.activeMonth] || [];
-            const searchVal = (document.getElementById('tx-search-input').value || '').toLowerCase();
-            const filterType = document.getElementById('tx-filter-type').value;
-            const filterCat = document.getElementById('tx-filter-cat').value;
+            const searchVal = (document.getElementById('log-search-input').value || '').toLowerCase();
+            const filterType = document.getElementById('log-filter-type').value;
+            const filterCat = document.getElementById('log-filter-cat').value;
 
             const filtered = txs.filter(t => {
                 const matchSearch = t.desc.toLowerCase().includes(searchVal) || t.category.toLowerCase().includes(searchVal);
@@ -887,14 +891,14 @@
                 return matchSearch && matchType && matchCat;
             });
 
-            document.getElementById('tx-total-count').textContent = `${filtered.length} Entries`;
-            document.getElementById('full-transactions-list').innerHTML = buildTxListHtml(filtered);
+            document.getElementById('log-total-count').textContent = `${filtered.length} Entries`;
+            document.getElementById('full-log-list').innerHTML = buildTxListHtml(filtered);
             applyPrivacyMasking();
         }
 
         function buildTxListHtml(list) {
             if (list.length === 0) {
-                return `<div class="p-4 text-center text-xs text-slate-500 bg-cardbg rounded-xl border border-borderdark">No matching transactions found.</div>`;
+                return `<div class="p-5 text-center text-xs text-slate-500 bg-cardbg rounded-xl border border-borderdark">No transactions recorded.</div>`;
             }
 
             return list.map(t => {
@@ -904,26 +908,26 @@
                 const amtColor = isIncome ? 'text-emeraldglow' : 'text-slate-200';
 
                 return `
-                    <div class="flex items-center justify-between p-3 bg-cardbg hover:bg-charcoal rounded-xl border border-borderdark/80 transition">
-                        <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-xl flex items-center justify-center text-xs text-white" style="background-color: ${catObj.color}22; border: 1px solid ${catObj.color}">
+                    <div class="flex items-center justify-between p-3.5 bg-cardbg hover:bg-charcoal rounded-xl border border-borderdark/80 transition">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-9 h-9 rounded-xl flex items-center justify-center text-xs text-white flex-shrink-0" style="background-color: ${catObj.color}22; border: 1px solid ${catObj.color}">
                                 <i class="fa-solid ${isIncome ? 'fa-wallet' : catObj.icon}"></i>
                             </div>
-                            <div>
-                                <h4 class="font-bold text-xs text-white leading-tight">${escapeHtml(t.desc)}</h4>
-                                <span class="text-[10px] font-mono text-slate-400">${t.date} • ${t.category}</span>
+                            <div class="min-w-0">
+                                <h4 class="font-bold text-xs text-white leading-tight truncate">${escapeHtml(t.desc)}</h4>
+                                <span class="text-[10px] font-mono text-slate-400 block">${t.date} • ${t.category}</span>
                             </div>
                         </div>
 
-                        <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-3 flex-shrink-0">
                             <span class="font-extrabold text-xs font-mono ${amtColor} privacy-target">
                                 ${sign} ${formatCurrency(t.amount)}
                             </span>
                             <div class="flex items-center gap-1">
-                                <button onclick="editTransaction('${t.id}')" class="text-slate-500 hover:text-white p-1">
+                                <button type="button" onclick="editTransaction('${t.id}')" class="text-slate-500 hover:text-white p-1">
                                     <i class="fa-solid fa-pen text-[11px]"></i>
                                 </button>
-                                <button onclick="deleteTransaction('${t.id}')" class="text-slate-500 hover:text-tailfincrimson p-1">
+                                <button type="button" onclick="deleteTransaction('${t.id}')" class="text-slate-500 hover:text-tailfincrimson p-1">
                                     <i class="fa-solid fa-trash text-[11px]"></i>
                                 </button>
                             </div>
@@ -934,7 +938,7 @@
         }
 
         /**
-         * BUDGETS TAB RENDER
+         * BUDGET CAPS TAB
          */
         function renderBudgetsTab() {
             const txs = state.months[state.activeMonth] || [];
@@ -967,7 +971,7 @@
                                 <span class="font-bold text-xs text-slate-200">${cat.label}</span>
                             </div>
 
-                            <button onclick="editCategoryCap('${cat.id}')" class="text-[11px] font-mono font-bold text-slate-400 hover:text-emeraldglow flex items-center gap-1 bg-obsidian px-2 py-1 rounded-lg border border-borderdark">
+                            <button type="button" onclick="editCategoryCap('${cat.id}')" class="text-[11px] font-mono font-bold text-slate-400 hover:text-emeraldglow flex items-center gap-1 bg-obsidian px-2.5 py-1 rounded-lg border border-borderdark">
                                 Cap: <span class="text-white privacy-target">${formatCurrency(cap)}</span> <i class="fa-solid fa-pen text-[9px]"></i>
                             </button>
                         </div>
@@ -988,7 +992,7 @@
 
         function editCategoryCap(catId) {
             const currentCap = state.categoryBudgets[catId] || 500;
-            const newCapStr = prompt(`Set new monthly budget limit for ${catId}:`, currentCap);
+            const newCapStr = prompt(`Set new monthly budget cap for ${catId}:`, currentCap);
             if (newCapStr !== null) {
                 const newCap = parseFloat(newCapStr);
                 if (!isNaN(newCap) && newCap >= 0) {
@@ -1013,7 +1017,6 @@
                 }
             });
 
-            // Smart Insights
             const sortedCats = Object.keys(catSpent).sort((a, b) => catSpent[b] - catSpent[a]);
             document.getElementById('insight-top-cat').textContent = sortedCats.length > 0 ? sortedCats[0] : 'None';
 
@@ -1025,7 +1028,7 @@
 
             document.getElementById('insight-projected').textContent = formatCurrency(projected);
 
-            // Doughnut Chart Setup
+            // Doughnut Chart
             const categories = getAllCategories();
             const doughnutLabels = [];
             const doughnutData = [];
@@ -1050,7 +1053,7 @@
                     datasets: [{
                         data: doughnutData,
                         backgroundColor: doughnutColors,
-                        borderColor: '#11151C',
+                        borderColor: '#11151F',
                         borderWidth: 3
                     }]
                 },
@@ -1064,7 +1067,7 @@
                 }
             });
 
-            // 6-Month Bar History Setup
+            // 6-Month Bar History
             const historyLabels = [];
             const historyIncome = [];
             const historyExpense = [];
@@ -1101,7 +1104,7 @@
                     maintainAspectRatio: false,
                     scales: {
                         x: { grid: { display: false }, ticks: { color: '#94A3B8', font: { size: 10 } } },
-                        y: { grid: { color: '#1E2633' }, ticks: { color: '#94A3B8', font: { size: 9 } } }
+                        y: { grid: { color: '#212B3E' }, ticks: { color: '#94A3B8', font: { size: 9 } } }
                     },
                     plugins: {
                         legend: { position: 'top', labels: { color: '#94A3B8', font: { size: 10 } } }
@@ -1111,19 +1114,22 @@
         }
 
         /**
-         * TRANSACTION MODAL & ACTIONS
+         * RELIABLE MODAL OPEN/CLOSE ACTIONS
          */
-        function openAddTransactionModal() {
+        function openAddTransactionModal(e) {
+            if (e) e.stopPropagation();
+            const modal = document.getElementById('modal-transaction');
+            modal.classList.remove('hidden');
+
             document.getElementById('form-tx-id').value = '';
             document.getElementById('form-tx-desc').value = '';
             document.getElementById('form-tx-amount').value = '';
-            document.getElementById('tx-modal-title').textContent = "New Entry";
+            document.getElementById('tx-modal-title').innerHTML = `<i class="fa-solid fa-plus-circle text-emeraldglow"></i> Log New Entry`;
             setTxModalType('EXPENSE');
-            document.getElementById('modal-transaction').classList.remove('hidden-state');
         }
 
         function closeTransactionModal() {
-            document.getElementById('modal-transaction').classList.add('hidden-state');
+            document.getElementById('modal-transaction').classList.add('hidden');
         }
 
         function setTxModalType(type) {
@@ -1132,11 +1138,11 @@
             const btnInc = document.getElementById('btn-tx-type-income');
 
             if (type === 'EXPENSE') {
-                btnExp.className = "py-2 rounded-lg bg-tailfincrimson/30 text-tailfincrimson border border-tailfincrimson/40 font-bold";
-                btnInc.className = "py-2 rounded-lg text-slate-400";
+                btnExp.className = "py-2.5 rounded-lg bg-tailfincrimson/30 text-tailfincrimson border border-tailfincrimson/40 font-bold";
+                btnInc.className = "py-2.5 rounded-lg text-slate-400";
             } else {
-                btnInc.className = "py-2 rounded-lg bg-emeraldglow/20 text-emeraldglow border border-emeraldglow/40 font-bold";
-                btnExp.className = "py-2 rounded-lg text-slate-400";
+                btnInc.className = "py-2.5 rounded-lg bg-emeraldglow/20 text-emeraldglow border border-emeraldglow/40 font-bold";
+                btnExp.className = "py-2.5 rounded-lg text-slate-400";
             }
         }
 
@@ -1179,10 +1185,10 @@
             document.getElementById('form-tx-amount').value = t.amount;
             document.getElementById('form-tx-category').value = t.category;
             document.getElementById('form-tx-date').value = t.date;
-            document.getElementById('tx-modal-title').textContent = "Edit Entry";
+            document.getElementById('tx-modal-title').innerHTML = `<i class="fa-solid fa-pen text-emeraldglow"></i> Edit Entry`;
             setTxModalType(t.type);
 
-            document.getElementById('modal-transaction').classList.remove('hidden-state');
+            document.getElementById('modal-transaction').classList.remove('hidden');
         }
 
         function deleteTransaction(id) {
@@ -1194,23 +1200,12 @@
             }
         }
 
-        /**
-         * SETTINGS & CUSTOM CATEGORY
-         */
-        function openSettingsModal() {
-            document.getElementById('modal-settings').classList.remove('hidden-state');
-        }
-
-        function closeSettingsModal() {
-            document.getElementById('modal-settings').classList.add('hidden-state');
-        }
-
         function openAddCategoryModal() {
-            document.getElementById('modal-custom-cat').classList.remove('hidden-state');
+            document.getElementById('modal-custom-cat').classList.remove('hidden');
         }
 
         function closeAddCategoryModal() {
-            document.getElementById('modal-custom-cat').classList.add('hidden-state');
+            document.getElementById('modal-custom-cat').classList.add('hidden');
         }
 
         function handleSaveCustomCategory(e) {
@@ -1245,10 +1240,7 @@
 
         function exportToCSV() {
             const txs = state.months[state.activeMonth] || [];
-            if (txs.length === 0) {
-                showToast("No data to export.");
-                return;
-            }
+            if (txs.length === 0) { showToast("No data to export."); return; }
 
             let csv = "ID,Date,Type,Category,Description,Amount,Currency\n";
             txs.forEach(t => {
@@ -1284,13 +1276,12 @@
                         saveState();
                         populateCategoryDropdowns();
                         renderApp();
-                        closeSettingsModal();
-                        showToast("Backup restored successfully!");
+                        showToast("Backup restored!");
                     } else {
-                        showToast("Invalid JSON file format.");
+                        showToast("Invalid JSON file.");
                     }
                 } catch(err) {
-                    showToast("Error parsing backup JSON.");
+                    showToast("Error parsing backup.");
                 }
             };
             reader.readAsText(file);
@@ -1300,46 +1291,39 @@
             loadSampleDataForMonth(state.activeMonth);
             saveState();
             renderApp();
-            showToast("Sample month loaded!");
+            showToast("Sample data loaded!");
         }
 
         function resetAllData() {
-            if (confirm("Reset ALL data and start fresh?")) {
+            if (confirm("Reset ALL budget data?")) {
                 localStorage.removeItem(STORAGE_KEY);
                 state = { currency: "RM", privacyMode: false, activeMonth: "2026-11", categoryBudgets: {}, customCategories: [], months: {} };
                 loadSampleDataForMonth("2026-11");
                 saveState();
                 populateCategoryDropdowns();
                 renderApp();
-                closeSettingsModal();
                 showToast("All data reset.");
             }
         }
 
-        /**
-         * TAB SWITCHER
-         */
         function switchTab(tabId) {
-            ['tab-overview', 'tab-transactions', 'tab-budgets', 'tab-analytics'].forEach(key => {
+            const tabs = ['tab-dashboard', 'tab-log', 'tab-budgets', 'tab-analytics', 'tab-settings'];
+            tabs.forEach(key => {
                 const viewEl = document.getElementById(key.replace('tab-', 'view-'));
                 const btnEl = document.getElementById(`nav-btn-${key}`);
                 
                 if (key === tabId) {
-                    viewEl.classList.remove('hidden');
-                    btnEl.className = "flex flex-col items-center gap-1 text-emeraldglow py-1 px-3";
+                    if (viewEl) viewEl.classList.remove('hidden');
+                    if (btnEl) btnEl.className = "flex flex-col items-center gap-1 text-emeraldglow py-1 px-3 font-bold";
                 } else {
-                    viewEl.classList.add('hidden');
-                    btnEl.className = "flex flex-col items-center gap-1 text-slate-500 hover:text-slate-200 py-1 px-3";
+                    if (viewEl) viewEl.classList.add('hidden');
+                    if (btnEl) btnEl.className = "flex flex-col items-center gap-1 text-slate-500 hover:text-slate-200 py-1 px-3";
                 }
             });
 
-            // Re-render charts on analytics tab open
             if (tabId === 'tab-analytics') renderAnalyticsTab();
         }
 
-        /**
-         * TOAST UTILITY
-         */
         function showToast(msg) {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
